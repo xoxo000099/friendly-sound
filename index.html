@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Fun with Sounds 聲音好好玩</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face{
+  font-family:"jf-openhuninn";
+  src:url("https://cdn.jsdelivr.net/gh/justfont/open-huninn-font@master/font/jf-openhuninn-2.1.ttf") format("truetype"),
+      url("https://cdn.jsdelivr.net/gh/justfont/open-huninn-font@master/font/jf-openhuninn-2.0.ttf") format("truetype"),
+      url("https://cdn.jsdelivr.net/gh/justfont/open-huninn-font@1.1/font/jf-openhuninn-1.1.ttf") format("truetype");
+  font-display:swap;
+}
+:root{
+  --ink:#5A3A28; --cream:#FFF6E8; --paper:#FFFDF7; --orange:#F59E4C; --peach:#FFD3B0;
+  --mint:#A8DCC8; --sky:#BFE3F2; --red:#F07C6C; --yellow:#FFD86B; --pink:#F7A1A8; --blue:#7EB6E6;
+  --en:"Fredoka","Arial Rounded MT Bold","Varela Round",system-ui,sans-serif;
+  --zh:"jf-openhuninn","Huninn","PingFang TC","Microsoft JhengHei","Noto Sans TC","Noto Sans CJK TC",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:var(--en),var(--zh); color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 18%,#FFF1C2 0 120px,transparent 121px),
+    radial-gradient(circle at 88% 30%,#FFF4CF 0 150px,transparent 151px),
+    linear-gradient(#FFFBE6,#FFFCEB 60%,#FFF6D6);
+  overflow-x:hidden; -webkit-tap-highlight-color:transparent;
+}
+.zh{font-family:var(--zh); font-weight:400}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+svg{display:block}
+.o{stroke:var(--ink);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.ln{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- background street + falling bits ---------- */
+#street{position:fixed;left:0;right:0;bottom:0;height:150px;z-index:0;pointer-events:none;opacity:.55}
+#street svg{width:100%;height:100%}
+#fall{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.drop{position:absolute;top:-60px;animation:fall linear forwards}
+@keyframes fall{
+  0%{transform:translate(0,0) rotate(0)}
+  50%{transform:translate(var(--dx),55vh) rotate(var(--rot))}
+  100%{transform:translate(0,112vh) rotate(calc(var(--rot) * -1))}
+}
+
+/* ---------- top bar ---------- */
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:rgba(255,251,230,.93);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  border-bottom:3px dashed #EDD38E}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:18px;white-space:nowrap}
+.brand svg{width:40px;height:40px}
+.tabs{display:flex;gap:8px;flex:1;justify-content:center;flex-wrap:wrap}
+.tab{padding:6px 14px 5px;border:3px solid var(--ink);border-radius:18px 14px 20px 12px;background:var(--paper);
+  font-weight:600;font-size:16px;line-height:1.05;text-align:center;box-shadow:0 3px 0 var(--ink);transition:transform .15s}
+.tab small{display:block;font-family:var(--zh);font-size:12px;font-weight:400}
+.tab:hover{transform:translateY(-2px)}
+.tab.on{background:var(--orange);color:#fff}
+.tools{display:flex;gap:8px}
+.tool{width:46px;height:46px;border:3px solid var(--ink);border-radius:50% 46% 52% 48%;background:var(--paper);
+  display:grid;place-items:center;box-shadow:0 3px 0 var(--ink)}
+.tool svg{width:26px;height:26px}
+.tool.off{opacity:.55}
+
+/* ---------- pages ---------- */
+main{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:22px 18px 20px;min-height:calc(100vh - 170px)}
+.page{display:none;animation:pop .45s ease}
+.page.show{display:block}
+@keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h2.title{text-align:center;margin:4px 0 2px;font-size:clamp(30px,4vw,46px);font-weight:700}
+.sub{text-align:center;font-family:var(--zh);font-size:clamp(16px,1.8vw,21px);margin:0 0 18px;color:#8A6248}
+
+/* paper card */
+.card{position:relative;background:var(--paper);border:3px solid var(--ink);
+  border-radius:28px 18px 32px 16px / 18px 30px 16px 28px;box-shadow:5px 6px 0 rgba(90,58,40,.18);
+  transform:rotate(var(--r,0deg))}
+.tape:before{content:"";position:absolute;top:-14px;left:50%;width:84px;height:26px;margin-left:-42px;
+  background:repeating-linear-gradient(45deg,rgba(255,216,107,.85) 0 8px,rgba(255,236,170,.85) 8px 16px);
+  transform:rotate(var(--tr,-4deg));border-radius:3px;box-shadow:0 1px 2px rgba(0,0,0,.08);z-index:2}
+.tape.mint:before{background:repeating-linear-gradient(45deg,rgba(168,220,200,.9) 0 8px,rgba(212,240,228,.9) 8px 16px)}
+.tape.pink:before{background:repeating-linear-gradient(45deg,rgba(247,161,168,.85) 0 8px,rgba(252,212,215,.85) 8px 16px)}
+
+/* ---------- home ---------- */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:26px;align-items:center;padding-top:8px}
+.hero h1{font-size:clamp(46px,6.4vw,84px);line-height:1;margin:0;font-weight:700;color:var(--ink)}
+.hero h1 span{color:var(--orange)}
+.hero .zhT{font-family:var(--zh);font-size:clamp(32px,4.2vw,56px);margin:8px 0 14px;color:#C0602A}
+.hero p{font-size:clamp(18px,2vw,24px);margin:0 0 4px;line-height:1.35}
+.hero p.zh{color:#8A6248;margin-bottom:22px}
+.go{font-size:clamp(26px,3vw,36px);font-weight:700;padding:12px 38px;background:var(--red);color:#fff;border:4px solid var(--ink);
+  border-radius:40px 30px 44px 28px;box-shadow:0 6px 0 var(--ink);animation:bob 2.2s ease-in-out infinite}
+.go:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-1.5deg)}}
+.heroArt{padding:14px}
+.heroArt svg{width:100%;height:auto}
+.wave{animation:wv 1.6s ease-in-out infinite;transform-origin:center}
+.wave.d2{animation-delay:.3s}.wave.d3{animation-delay:.6s}
+@keyframes wv{0%,100%{opacity:.25}50%{opacity:1}}
+
+/* ---------- words ---------- */
+.words{display:grid;grid-template-columns:repeat(4,1fr);gap:26px 22px;padding-top:12px}
+.wcard{padding:12px 10px 14px;text-align:center;transition:transform .2s}
+.wcard:hover{transform:rotate(var(--r)) translateY(-4px)}
+.wcard.ping{animation:ping .5s}
+@keyframes ping{40%{transform:scale(1.07) rotate(0)}}
+.wcard .art{width:min(100%,150px);aspect-ratio:1;margin:0 auto}
+.wcard b{display:block;font-size:clamp(22px,2.4vw,30px);font-weight:600;margin-top:2px}
+.wcard .zh{font-size:clamp(16px,1.6vw,20px);color:#8A6248}
+
+/* ---------- sentence ---------- */
+.sentWrap{display:grid;grid-template-columns:1.25fr 1fr;gap:26px;align-items:center}
+.qline{font-size:clamp(30px,4vw,50px);font-weight:600;margin:4px 0}
+.qline .zh{display:block;font-size:clamp(16px,1.7vw,20px);color:#8A6248;font-weight:400}
+.say{display:inline-grid;place-items:center;width:44px;height:44px;border:3px solid var(--ink);border-radius:50%;background:var(--yellow);vertical-align:middle;margin-left:8px;box-shadow:0 3px 0 var(--ink)}
+.say svg{width:22px;height:22px}
+.sbox{padding:20px 22px 22px;margin-top:6px}
+.blank{display:inline-block;min-width:4.6em;border-bottom:5px dashed var(--orange);text-align:center;color:var(--red);padding:0 6px;transition:all .2s}
+.blank.fill{border-bottom-style:solid;animation:ping .45s}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.chip{font-size:clamp(19px,2vw,24px);font-weight:600;padding:8px 16px 6px;border:3px solid var(--ink);background:#fff;
+  border-radius:22px 16px 24px 14px;box-shadow:0 4px 0 var(--ink);line-height:1.1;text-align:center}
+.chip small{display:block;font-family:var(--zh);font-weight:400;font-size:14px;color:#8A6248}
+.chip.on{background:var(--mint)}
+.listenBox{padding:16px;text-align:center}
+.listenBox .stage{width:100%;max-width:360px;margin:0 auto}
+.listenBox .cap{font-family:var(--zh);font-size:18px;color:#8A6248;margin-top:4px;min-height:1.4em}
+
+/* ---------- safety ---------- */
+.book{display:flex;align-items:center;gap:14px;justify-content:center;margin:-4px 0 22px;text-align:left}
+.book svg{width:56px;height:56px}
+.book .zh{font-size:15px;color:#8A6248;max-width:560px;line-height:1.45}
+.safe{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 22px}
+@media (max-width:1100px){.safe{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.safe{grid-template-columns:1fr}}
+.scard{padding:16px 18px 18px;display:grid;grid-template-columns:118px 1fr;gap:4px 14px;align-items:start}
+.scard .art{width:118px;height:118px;grid-row:span 2}
+.scard h3{margin:0;font-size:clamp(22px,2.2vw,27px);line-height:1.1}
+.scard h3 .zh{display:block;font-size:17px;color:#C0602A}
+.pattern{grid-column:1/-1;margin-top:8px}
+.bars{display:flex;align-items:flex-end;height:26px;gap:0;border-bottom:2px solid #D9BFA3}
+.bar{height:20px;border:2px solid var(--ink);border-radius:6px;background:var(--orange);transition:background .1s}
+.bar.gap{border:none;background:none}
+.bar.voice{background:#A9D2FF}
+.bar.now{background:var(--red)}
+.pnote{font-family:var(--zh);font-size:15px;color:#8A6248;margin-top:4px;line-height:1.4}
+.act{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin-top:10px;padding:8px 12px;background:#FFF1DE;border-radius:16px 12px 18px 10px;border:2px dashed #E8B98A}
+.act .mini{width:72px;height:72px;flex:none}
+.act>div:nth-child(2){flex:1}
+.act .say{flex:none;margin-left:0}
+.act b{font-size:clamp(18px,1.7vw,22px);line-height:1.15}
+.act .zh{display:block;font-size:16px}
+.play{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:17px;padding:6px 14px;border:3px solid var(--ink);border-radius:18px;background:var(--yellow);box-shadow:0 3px 0 var(--ink);margin-top:8px}
+.play svg{width:18px;height:18px}
+.play.on{background:var(--red);color:#fff}
+.scard .txt{align-self:center}
+.gov{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);font-weight:600;font-size:18px;
+  padding:8px 16px;border:3px solid var(--ink);border-radius:20px 14px 22px 12px;background:var(--orange);color:#fff;box-shadow:0 4px 0 var(--ink);margin-top:8px}
+.gov small{font-family:var(--zh);font-weight:400;font-size:15px}
+.gov svg{width:20px;height:20px}
+.glink{grid-column:1/-1;font-family:var(--zh);font-size:15px;color:#C0602A;font-weight:600;text-decoration:underline;margin-top:6px}
+.foot{font-family:var(--zh);font-size:14px;color:#A07D63;text-align:center;margin:22px auto 0;max-width:820px;line-height:1.5}
+
+/* ---------- games ---------- */
+.gtabs{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.gtab{padding:8px 18px 6px;border:3px solid var(--ink);border-radius:20px 14px 22px 12px;background:#fff;font-weight:600;font-size:18px;box-shadow:0 4px 0 var(--ink);line-height:1.1}
+.gtab small{display:block;font-family:var(--zh);font-weight:400;font-size:13px}
+.gtab.on{background:var(--sky)}
+.gtab .star{display:inline-block;width:18px;height:18px;vertical-align:-2px;margin-left:4px}
+.game{display:none}.game.show{display:block;animation:pop .35s}
+.gpanel{padding:20px 22px 24px;max-width:960px;margin:0 auto}
+.ghead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.ghead h3{margin:0;font-size:clamp(22px,2.4vw,28px)}
+.ghead h3 .zh{font-size:16px;color:#8A6248;margin-left:6px}
+.score{font-weight:600;font-size:18px;background:#FFF1DE;border:2px solid var(--ink);border-radius:14px;padding:4px 12px}
+.bigPlay{display:flex;align-items:center;gap:10px;margin:6px auto 16px;font-size:24px;font-weight:700;padding:10px 26px;background:var(--orange);color:#fff;border:4px solid var(--ink);border-radius:30px 24px 32px 22px;box-shadow:0 5px 0 var(--ink)}
+.bigPlay svg{width:30px;height:30px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.opt{background:#fff;border:3px solid var(--ink);border-radius:22px 16px 26px 14px;padding:10px;box-shadow:0 5px 0 var(--ink);text-align:center;transition:transform .15s}
+.opt .art{width:min(100%,140px);aspect-ratio:1;margin:0 auto}
+.opt b{font-size:clamp(19px,2vw,24px);display:block}
+.opt .zh{font-size:15px;color:#8A6248}
+.opt:hover{transform:translateY(-3px)}
+.opt.right{background:#DDF3E8;animation:ping .45s}
+.opt.wrong{background:#FFE1DC;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.msg{text-align:center;font-size:22px;font-weight:600;min-height:1.6em;margin-top:12px}
+.msg .zh{font-size:17px}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:640px;margin:0 auto}
+.mc{aspect-ratio:1/0.86;perspective:800px;padding:0}
+.mc .in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.mc.flip .in,.mc.done .in{transform:rotateY(180deg)}
+.mc .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:3px solid var(--ink);border-radius:18px 14px 20px 12px;display:grid;place-items:center;box-shadow:0 4px 0 var(--ink)}
+.mc .back{background:repeating-linear-gradient(45deg,#FFD3B0 0 10px,#FFE4CC 10px 20px)}
+.mc .back svg{width:52%;height:52%}
+.mc .front{background:#fff;transform:rotateY(180deg);padding:6px}
+.mc .front svg{width:80%;height:80%}
+.mc .front b{font-size:clamp(19px,2.2vw,26px);line-height:1.1}
+.mc .front b small{display:block;font-family:var(--zh);font-weight:400;font-size:14px;color:#8A6248}
+.mc.done .front{background:#DDF3E8}
+.scene{display:grid;grid-template-columns:200px 1fr;gap:18px;align-items:center;margin-bottom:14px}
+.scene .art{width:200px;height:200px}
+.scene .q{font-size:clamp(22px,2.6vw,30px);font-weight:600}
+.scene .q .zh{display:block;font-size:17px;font-weight:400;color:#8A6248}
+.again{font-size:16px;font-weight:600;padding:5px 12px;border:2px solid var(--ink);border-radius:14px;background:#fff;box-shadow:0 3px 0 var(--ink)}
+
+/* ---------- listen (real recordings) ---------- */
+h3.sec{font-size:clamp(22px,2.4vw,28px);margin:26px 0 14px;display:flex;width:fit-content;align-items:baseline;gap:10px;background:rgba(255,251,230,.95);padding:2px 14px;border-radius:14px;position:relative;z-index:1}
+h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
+.snd{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:22px 16px}
+.rc{padding:10px 8px 12px;text-align:center}
+.rc .art{width:min(100%,112px);aspect-ratio:1;margin:0 auto}
+.rc b{display:block;font-size:clamp(18px,1.8vw,22px);font-weight:600;line-height:1.15}
+.rc .zh{font-size:15px;color:#8A6248}
+.rc .msg{display:block;margin-top:6px;font-size:14px;background:#FFF1C2;border-radius:10px;padding:2px 6px}
+.playing .art{animation:wig .5s ease-in-out infinite}
+@keyframes wig{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+.talk{padding:16px 22px;margin-top:28px}
+.talk h4{margin:0 0 6px;font-size:24px}
+.talk p{margin:6px 0;font-size:19px}
+.talk .zh{color:#8A6248;font-size:16px;margin-left:8px}
+.ported{stroke:#5A3A28;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.ported text{stroke:none}
+/* ---------- voice levels ---------- */
+.meter{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.lv{padding:10px 6px 12px;text-align:center}
+.lv .art{width:min(100%,104px);aspect-ratio:1;margin:0 auto}
+.lv .n{display:inline-block;font-size:24px;font-weight:700;width:44px;height:44px;line-height:38px;border-radius:50%;color:#fff;background:var(--c);border:3px solid var(--ink);margin-top:-6px}
+.lv b{display:block;font-size:clamp(17px,1.7vw,21px)}
+.lv .zh{font-size:15px;color:#8A6248}
+.lv.sel{background:#FFF7D1;box-shadow:0 0 0 5px var(--c)}
+.lvs{display:flex;gap:4px;justify-content:center;margin-top:4px}
+.lvs i{font-style:normal;font-weight:700;width:30px;height:30px;line-height:26px;border-radius:50%;color:#fff;border:2px solid var(--ink);display:inline-block}
+.mic{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.mic .ani{width:110px;transition:transform .1s}
+.mbar{flex:1;min-width:220px;height:40px;border:3px solid var(--ink);border-radius:20px;overflow:hidden;background:#fff;position:relative}
+.mbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#A8DCC8,#FFD86B 55%,#F07C6C);transition:width .08s}
+.mbar span{position:absolute;inset:0;display:flex;justify-content:space-around;align-items:center;font-weight:700;color:#5A3A2899}
+#micLv{font-size:20px;min-width:220px;font-family:var(--zh)}
+.mbtn{font-size:18px;font-weight:600;padding:7px 16px;border:3px solid var(--ink);border-radius:18px;background:#fff;box-shadow:0 3px 0 var(--ink)}
+.mbtn.go2{background:var(--mint)}
+.lvopts{grid-template-columns:repeat(5,1fr)}
+.lvopts .opt .art{width:min(100%,86px)}
+.fairyArt{width:170px;height:170px}
+/* ---------- pager ---------- */
+.pager{position:relative;z-index:3;display:flex;justify-content:center;align-items:center;gap:18px;padding:6px 0 34px}
+.pager button{width:58px;height:58px;border:3px solid var(--ink);border-radius:50% 44% 52% 46%;background:var(--paper);box-shadow:0 4px 0 var(--ink);display:grid;place-items:center}
+.pager button svg{width:28px;height:28px}
+.pager button:disabled{opacity:.3;cursor:default}
+.dots{display:flex;gap:8px}
+.dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);background:#fff}
+.dots i.on{background:var(--orange)}
+
+/* ---------- win modal ---------- */
+#win{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:rgba(90,58,40,.35)}
+#win.show{display:grid}
+#win .card{padding:26px 34px 28px;text-align:center;max-width:min(520px,90vw);animation:zoom .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes zoom{from{transform:scale(.4)}}
+#win h2{font-size:clamp(40px,6vw,60px);margin:0;color:var(--red)}
+#win .zh{font-size:20px;margin:4px 0 10px}
+#win svg.m{width:170px;height:170px;margin:0 auto}
+#win button{margin-top:12px}
+#confetti{position:fixed;inset:0;z-index:61;pointer-events:none}
+.toast{position:fixed;left:50%;top:90px;transform:translateX(-50%);z-index:55;background:var(--paper);border:3px solid var(--ink);border-radius:20px;padding:8px 20px;font-weight:600;font-size:20px;box-shadow:0 4px 0 var(--ink);animation:pop .3s}
+
+/* ---------- responsive ---------- */
+@media (max-width:1020px){
+  .brand span{display:none}
+  .words{grid-template-columns:repeat(4,1fr);gap:22px 14px}
+}
+@media (max-width:820px){
+  .meter,.lvopts{grid-template-columns:repeat(3,1fr)}
+  header{flex-wrap:wrap}
+  .tabs{order:3;flex:1 1 100%}
+  .tools{margin-left:auto}
+  .hero{grid-template-columns:1fr;text-align:center}
+  .sentWrap{grid-template-columns:1fr}
+  .words{grid-template-columns:repeat(4,1fr);gap:20px 12px}
+  .opts{gap:10px}
+  .scene{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .scene .art{width:150px;height:150px}
+}
+@media (max-width:560px){.words{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1500px){
+  main{max-width:1380px}
+  .wcard .art{width:min(100%,180px)}
+}
+</style>
+</head>
+<body>
+
+<!-- shared SVG filter for hand-drawn wobble -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="rough2" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="fall"></div>
+<div id="street"></div>
+
+<header>
+  <div class="brand" id="brandArt"></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="tools">
+    <button class="tool off" id="musicBtn" title="Music 音樂"></button>
+    <button class="tool" id="fsBtn" title="Full screen 全螢幕 (F)"></button>
+  </div>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section class="page show" id="p0">
+    <div class="hero">
+      <div>
+        <h1>Fun with <span>Sounds!</span></h1>
+        <div class="zhT">聲音好好玩</div>
+        <p>Listen! What do you hear? Let's learn safety sounds, too.</p>
+        <p class="zh">仔細聽！你聽到什麼聲音？一起認識保護我們的警報聲。</p>
+        <button class="go" id="goBtn">Let's go!</button>
+      </div>
+      <div class="heroArt card tape" style="--r:1.5deg" id="heroArt"></div>
+    </div>
+  </section>
+
+  <!-- WORDS -->
+  <section class="page" id="p1">
+    <h2 class="title">Words</h2>
+    <p class="sub">點一下卡片，聽英文，也聽聽它的聲音！</p>
+    <div class="words" id="words"></div>
+  </section>
+
+  <!-- SENTENCE -->
+  <section class="page" id="p2">
+    <h2 class="title">Sentence</h2>
+    <p class="sub">選一個答案，放進空格裡，一起念念看！</p>
+    <div class="sentWrap">
+      <div class="card tape sbox" style="--r:-.8deg">
+        <div class="qline">What do you hear?<button class="say" id="sayQ" title="Listen"></button>
+          <span class="zh">你聽到什麼？</span></div>
+        <div class="qline" style="margin-top:16px">I hear <span class="blank" id="blank">&nbsp;</span>.
+          <span class="zh" id="blankZh">我聽到＿＿。</span></div>
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="card tape mint listenBox" style="--r:1.2deg">
+        <div class="stage" id="stage"></div>
+        <div class="cap" id="stageCap">選一個答案，我會念給你聽喔！</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTEN -->
+  <section class="page" id="p3">
+    <h2 class="title">Listen!</h2>
+    <p class="sub">閉上眼睛，安靜聽一聽。點卡片會播放真實錄音（需要連網）。</p>
+    <h3 class="sec">Nice sounds <span class="zh">好聽的聲音</span></h3>
+    <div class="snd" id="niceGrid"></div>
+    <h3 class="sec">Sounds at home and outside <span class="zh">生活中的聲音</span></h3>
+    <div class="snd" id="dailyGrid"></div>
+    <h3 class="sec">Sounds tell us things <span class="zh">聲音在提醒我們什麼？</span></h3>
+    <div class="snd" id="signalGrid"></div>
+    <div class="card tape mint talk" style="--r:-.4deg">
+      <h4>Let's talk <span class="zh">說說看</span></h4>
+      <p>Is it <b>loud</b> or <b>quiet</b>?<span class="zh">這個聲音大聲還是小聲？</span></p>
+      <p>Do you like it?<span class="zh">你喜歡這個聲音嗎？為什麼？</span></p>
+      <p>Nature or people?<span class="zh">是大自然的聲音，還是人做出來的聲音？</span></p>
+    </div>
+  </section>
+
+  <!-- VOICE LEVELS -->
+  <section class="page" id="p4">
+    <h2 class="title">Voice Levels</h2>
+    <p class="sub">點點看動物，聽聽每一號音量。不同的地方，要用不同的音量喔！</p>
+    <div class="meter" id="meter"></div>
+    <h3 class="sec">Which voice here? <span class="zh">在這裡用幾號音量？</span></h3>
+    <div class="snd" id="sceneGrid"></div>
+    <div class="card tape pink talk" style="--r:.3deg">
+      <h4>Class noise meter <span class="zh">教室音量計</span></h4>
+      <p class="zh" style="margin-left:0">打開麥克風，看看我們現在是幾號音量？（第一次會問可不可以用麥克風）</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px">
+        <button class="mbtn go2" id="micStart">Start 開始</button><button class="mbtn" id="micStop">Stop 停止</button>
+        <label class="zh">目標：<select id="micTarget" style="font:inherit;padding:5px 8px;border-radius:12px;border:3px solid #5A3A28">
+          <option value="1">1 悄悄話</option><option value="2" selected>2 小聲說話</option><option value="3">3 全班聽得到</option></select></label>
+      </div>
+      <div class="mic"><div class="ani" id="micAni"></div><div class="mbar"><i id="micFill"></i><span><b>0</b><b>1</b><b>2</b><b>3</b><b>4</b></span></div><div id="micLv">還沒開始</div></div>
+    </div>
+  </section>
+
+  <!-- SAFETY -->
+  <section class="page" id="p5">
+    <h2 class="title">Safety Sounds</h2>
+    <p class="sub">小橘書教我們：聽到這些聲音，要怎麼做？</p>
+    <div class="book" id="bookRow"></div>
+    <div class="safe" id="safe"></div>
+    <p class="foot"><span id="realTag" style="display:none;background:#DDF3E8;border:2px solid #5A3A28;border-radius:10px;padding:1px 8px;margin-bottom:4px">正在使用真實錄音</span><br>沒有放錄音檔時，會播放縮短、比較小聲的示範聲音。真正的警報很大聲、很長。<br>
+      資料參考：<a href="https://prepare.mnd.gov.tw/emergency-responses" target="_blank" rel="noopener" style="color:inherit">《臺灣全民安全指引》（小橘書）災害應對</a>、內政部警政署防空警報音符說明、運用防空警報系統發布海嘯警報標準作業程序、內政部「災害緊急應變警報訊號」公告（警笛依此規格合成）、消防署地震避難動作。<br>國外救護車錄音：<a href="https://developers.google.com/assistant/tools/sound-library" target="_blank" rel="noopener" style="color:inherit">Google Sound Library</a>（CC BY 4.0），需連網。</p>
+  </section>
+
+  <!-- GAMES -->
+  <section class="page" id="p6">
+    <h2 class="title">Games</h2>
+    <p class="sub">四個遊戲都完成，就有驚喜喔！</p>
+    <div class="gtabs" id="gtabs"></div>
+
+    <div class="game show" id="g0">
+      <div class="card tape gpanel" style="--r:-.4deg">
+        <div class="ghead"><h3>Sound Detective<span class="zh">聲音小偵探</span></h3><span class="score" id="g0score"></span></div>
+        <button class="bigPlay" id="g0play"></button>
+        <div class="opts" id="g0opts"></div>
+        <div class="msg" id="g0msg"></div>
+      </div>
+    </div>
+
+    <div class="game" id="g1">
+      <div class="card tape pink gpanel" style="--r:.4deg">
+        <div class="ghead"><h3>Memory Match<span class="zh">翻翻配對</span></h3>
+          <span><span class="score" id="g1score"></span> <button class="again" id="g1new">New 重來</button></span></div>
+        <div class="mem" id="mem"></div>
+      </div>
+    </div>
+
+    <div class="game" id="g3">
+      <div class="card tape gpanel" style="--r:.3deg">
+        <div class="ghead"><h3>Voice Fairy<span class="zh">音量小精靈</span></h3><span class="score" id="g3score"></span></div>
+        <div class="scene"><div class="fairyArt" id="g3art"></div><div class="q" id="g3q"></div></div>
+        <div class="opts lvopts" id="g3opts"></div>
+        <div class="msg" id="g3msg"></div>
+      </div>
+    </div>
+
+    <div class="game" id="g2">
+      <div class="card tape mint gpanel" style="--r:-.3deg">
+        <div class="ghead"><h3>What Should I Do?<span class="zh">怎麼辦才對？</span></h3><span class="score" id="g2score"></span></div>
+        <div class="scene"><div class="art" id="g2art"></div>
+          <div><div class="q" id="g2q"></div><button class="play" id="g2play"></button></div></div>
+        <div class="opts" id="g2opts"></div>
+        <div class="msg" id="g2msg"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pager">
+    <button id="prev" title="Back 上一頁"></button>
+    <div class="dots" id="dots"></div>
+    <button id="next" title="Next 下一頁"></button>
+  </div>
+</main>
+
+<div id="win"><div class="card tape" style="--r:-1deg">
+  <div id="winArt"></div>
+  <h2>Great job!</h2>
+  <div class="zh">四個遊戲都完成了，你是聲音小達人！</div>
+  <button class="go" id="winClose" style="animation:none;font-size:24px;padding:8px 28px">OK!</button>
+</div></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* =========================================================
+   ART  (all hand-drawn SVG, viewBox 0 0 120 120)
+   ========================================================= */
+const INK='#5A3A28';
+const svg=(inner,vb='0 0 120 120',f='rough')=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg"><g filter="url(#${f})">${inner}</g></svg>`;
+const face=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">
+  <path d="M-13 0 q4.5 -6.5 9 0 M4 0 q4.5 -6.5 9 0" class="ln" stroke-width="2.8"/>
+  <ellipse cx="-14" cy="8" rx="5" ry="3.2" fill="#F7A1A8" opacity=".9"/>
+  <ellipse cx="14" cy="8" rx="5" ry="3.2" fill="#F7A1A8" opacity=".9"/>
+  <path d="M-3.5 6 q3.5 3.6 7 0" class="ln" stroke-width="2.4"/></g>`;
+const shadow=(cx,cy,rx)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="5" fill="#E9CFAF" opacity=".8"/>`;
+const wheel=(x,y)=>`<circle cx="${x}" cy="${y}" r="10" fill="#6B4A36" class="o"/><circle cx="${x}" cy="${y}" r="3.5" fill="#F3E4D2"/>`;
+const arcs=(x,y,dir=1,c=INK)=>`<g class="ln" stroke="${c}" stroke-width="3"><path d="M${x} ${y-8} q${6*dir} 8 0 16" class="wave"/><path d="M${x+7*dir} ${y-14} q${10*dir} 14 0 28" class="wave d2"/></g>`;
+
+const ART={
+ambulance:()=>`${shadow(60,101,48)}
+  <rect x="10" y="40" width="80" height="50" rx="10" fill="#FFFDF8" class="o"/>
+  <path d="M90 48 h7 q9 0 11 11 l3 17 v14 h-21z" fill="#FFFDF8" class="o"/>
+  <path d="M95 53 h3 q5 0 6.5 7 l1.5 7 h-11z" fill="#BFE3F2" class="o" stroke-width="2.4"/>
+  <rect x="10" y="70" width="101" height="7" fill="#F07C6C"/>
+  <path d="M10 70 h101 M10 77 h101" class="ln" stroke-width="2"/>
+  <path d="M27 48 h8 v8 h8 v8 h-8 v8" fill="none"/>
+  <path d="M28 47 h8 v8 h8 v8 h-8 v8 h-8 v-8 h-8 v-8 h8z" fill="#F07C6C" class="o" stroke-width="2.4"/>
+  <rect x="50" y="30" width="16" height="10" rx="4" fill="#F07C6C" class="o"/>
+  ${face(70,55,.85)}
+  ${wheel(30,90)}${wheel(92,90)}`,
+fireTruck:()=>`${shadow(60,101,50)}
+  <rect x="8" y="46" width="76" height="44" rx="9" fill="#F2735F" class="o"/>
+  <path d="M84 44 h12 q10 0 12 12 l3 16 v18 h-27z" fill="#F2735F" class="o"/>
+  <path d="M90 50 h5 q5 0 6.5 7 l1.5 8 h-13z" fill="#BFE3F2" class="o" stroke-width="2.4"/>
+  <rect x="12" y="32" width="66" height="9" rx="3" fill="#FFF1DE" class="o" stroke-width="2.4"/>
+  <path d="M22 32 v9 M33 32 v9 M44 32 v9 M55 32 v9 M66 32 v9" class="ln" stroke-width="2"/>
+  <path d="M20 41 v5 M70 41 v5" class="ln" stroke-width="2.4"/>
+  <rect x="8" y="74" width="103" height="6" fill="#FFD86B"/><path d="M8 74 h103 M8 80 h103" class="ln" stroke-width="2"/>
+  <rect x="88" y="36" width="12" height="8" rx="3" fill="#7EB6E6" class="o" stroke-width="2.4"/>
+  ${face(44,60,.9)}
+  ${wheel(28,90)}${wheel(94,90)}`,
+policeCar:()=>`${shadow(60,101,50)}
+  <path d="M8 88 v-12 q0 -12 14 -14 l12 -2 l12 -15 q4 -5 11 -5 h20 q7 0 11 5 l12 14 l6 1 q12 2 12 16 v12z" fill="#FFFDF8" class="o"/>
+  <path d="M38 59 l9 -11 q2 -3 6 -3 h7 v14z M66 59 v-14 h10 q4 0 6 3 l8 11z" fill="#BFE3F2" class="o" stroke-width="2.4"/>
+  <rect x="8" y="78" width="104" height="9" fill="#5E8FD6"/><path d="M8 78 h104" class="ln" stroke-width="2"/>
+  <rect x="48" y="31" width="12" height="9" rx="3" fill="#F07C6C" class="o" stroke-width="2.4"/>
+  <rect x="60" y="31" width="12" height="9" rx="3" fill="#7EB6E6" class="o" stroke-width="2.4"/>
+  ${face(60,67,.8)}
+  ${wheel(30,90)}${wheel(92,90)}`,
+siren:()=>`${shadow(60,110,22)}
+  <rect x="56" y="62" width="8" height="48" rx="3" fill="#C9B8A6" class="o"/>
+  <path d="M42 40 l-20 -10 v36 l20 -10z" fill="#FFB27A" class="o"/>
+  <path d="M78 40 l20 -10 v36 l-20 -10z" fill="#FFB27A" class="o"/>
+  <circle cx="60" cy="48" r="22" fill="#FFD86B" class="o"/>
+  ${face(60,48,.85)}
+  ${arcs(12,48,-1,'#F07C6C')}${arcs(108,48,1,'#F07C6C')}`,
+earthquake:()=>`<path d="M6 106 l18 -3 l8 6 l12 -7 l10 5 l14 -6 l10 6 l14 -5 l22 3" class="ln" stroke-width="3"/>
+  <g transform="rotate(-7 60 70)">
+  <rect x="32" y="54" width="56" height="44" rx="4" fill="#FFD3B0" class="o"/>
+  <path d="M26 58 L60 28 L94 58z" fill="#F07C6C" class="o"/>
+  <rect x="66" y="74" width="14" height="24" rx="3" fill="#C9875A" class="o" stroke-width="2.4"/>
+  ${face(48,72,.8)}</g>
+  <path d="M14 46 l-6 6 l6 6 l-6 6 M106 46 l6 6 l-6 6 l6 6" class="ln" stroke="#F07C6C"/>`,
+tsunami:()=>`<path d="M4 104 h112" class="ln"/>
+  <path d="M8 104 q-2 -56 50 -72 q36 -10 52 16 q-18 -10 -30 2 q16 4 16 18 q-18 -6 -26 10 q-6 16 8 26z" fill="#7EC8E3" class="o"/>
+  <path d="M80 48 q12 -6 20 2" class="ln" stroke="#fff" stroke-width="4"/>
+  <path d="M20 92 q10 -6 20 0 q10 6 20 0" class="ln" stroke="#fff" stroke-width="3.5"/>
+  ${face(40,68,.85)}
+  <circle cx="104" cy="40" r="3" fill="#fff" class="o" stroke-width="1.8"/><circle cx="92" cy="30" r="2.5" fill="#fff" class="o" stroke-width="1.6"/>`,
+whistle:()=>`${shadow(56,102,34)}
+  <path d="M60 50 q0 -18 -20 -18" class="ln" stroke="#7EB6E6" stroke-width="4"/>
+  <circle cx="44" cy="74" r="26" fill="#F59E4C" class="o"/>
+  <path d="M44 48 h50 q8 0 8 8 v6 q0 6 -6 6 h-30z" fill="#F59E4C" class="o"/>
+  <rect x="78" y="44" width="10" height="8" rx="2" fill="#FFD86B" class="o" stroke-width="2.2"/>
+  <circle cx="60" cy="44" r="5" fill="#FFF1DE" class="o" stroke-width="2.2"/>
+  ${face(42,76,.85)}
+  <path d="M106 34 l8 -6 M108 46 h9 M106 58 l8 6" class="ln" stroke="#F07C6C"/>`,
+radio:()=>`${shadow(60,104,44)}
+  <path d="M82 42 L100 14" class="ln"/><circle cx="100" cy="13" r="4" fill="#F07C6C" class="o" stroke-width="2.2"/>
+  <rect x="16" y="42" width="88" height="58" rx="14" fill="#A8DCC8" class="o"/>
+  <circle cx="42" cy="72" r="16" fill="#FFFDF8" class="o"/>
+  <circle cx="36" cy="66" r="2" fill="${INK}"/><circle cx="48" cy="66" r="2" fill="${INK}"/><circle cx="36" cy="78" r="2" fill="${INK}"/><circle cx="48" cy="78" r="2" fill="${INK}"/><circle cx="42" cy="72" r="2" fill="${INK}"/>
+  <rect x="64" y="50" width="32" height="12" rx="4" fill="#FFF1DE" class="o" stroke-width="2.2"/><path d="M78 52 v8" class="ln" stroke="#F07C6C" stroke-width="2"/>
+  ${face(80,80,.8)}`,
+/* ---- safety actions ---- */
+shelter:()=>`<rect x="18" y="20" width="84" height="52" rx="6" fill="#FFE4C4" class="o"/>
+  <path d="M12 24 L60 4 L108 24z" fill="#C9A27E" class="o"/>
+  ${face(42,44,.75)}
+  <rect x="70" y="40" width="22" height="32" rx="3" fill="#FFD86B" class="o" stroke-width="2.4"/>
+  <path d="M6 72 h108" class="ln"/>
+  <path d="M30 72 v10 h12 v10 h12 v10 h12 v10" class="ln" stroke-width="3"/>
+  <path d="M90 82 v24 m-9 -9 l9 9 l9 -9" class="ln" stroke="#3FA07A" stroke-width="5"/>`,
+upHigh:()=>`<path d="M30 112 q8 -44 34 -70 q12 -12 22 0 q20 26 30 70z" fill="#A8DCC8" class="o"/>
+  <rect x="64" y="22" width="24" height="18" rx="3" fill="#FFE4C4" class="o" stroke-width="2.4"/>
+  <path d="M60 24 L76 10 L92 24z" fill="#F07C6C" class="o" stroke-width="2.4"/>
+  <path d="M2 112 q8 -8 16 0 q8 8 16 0" class="ln" stroke="#7EC8E3" stroke-width="4"/>
+  <path d="M22 92 V50" class="ln" stroke="#F59E4C" stroke-width="7"/>
+  <path d="M10 62 L22 46 L34 62" class="ln" stroke="#F59E4C" stroke-width="7"/>`,
+drop:()=>`<rect x="10" y="40" width="100" height="12" rx="4" fill="#C9875A" class="o"/>
+  <path d="M20 52 v56 M100 52 v56" class="ln" stroke-width="6"/>
+  <path d="M20 52 v56 M100 52 v56" class="ln" stroke="#C9875A" stroke-width="2"/>
+  <ellipse cx="58" cy="96" rx="28" ry="14" fill="#7EB6E6" class="o"/>
+  <circle cx="54" cy="78" r="16" fill="#FFE0C2" class="o"/>
+  <path d="M38 76 q0 -18 16 -18 q16 0 16 16 q-8 -8 -32 2z" fill="#6B4A36" class="o" stroke-width="2.4"/>
+  ${face(54,82,.6)}
+  <path d="M80 96 q12 -2 20 -6" class="ln" stroke-width="5"/>`,
+makeWay:()=>`<rect x="2" y="70" width="116" height="40" fill="#D9D2C7" class="o" stroke-width="2.4"/>
+  <path d="M8 90 h14 M34 90 h14 M60 90 h14 M86 90 h14" class="ln" stroke="#fff" stroke-width="4"/>
+  <g transform="translate(0 30) scale(.5)">${ART.ambulance()}</g>
+  <g transform="translate(72 64) scale(.38)"><path d="M8 88 v-12 q0 -12 14 -14 l12 -2 l12 -15 q4 -5 11 -5 h20 q7 0 11 5 l12 14 l6 1 q12 2 12 16 v12z" fill="#FFB27A" class="o"/>${wheel(30,90)}${wheel(92,90)}</g>
+  <path d="M70 40 q22 -6 32 18" class="ln" stroke="#3FA07A" stroke-width="4"/><path d="M95 54 l7 6 l4 -9" class="ln" stroke="#3FA07A" stroke-width="4"/>`,
+allClear:()=>`<circle cx="60" cy="58" r="30" fill="#FFD86B" class="o"/>
+  ${face(60,58,.9)}
+  <g class="ln" stroke="#F59E4C" stroke-width="4"><path d="M60 14 v-8 M60 102 v8 M16 58 h-8 M104 58 h8 M28 26 l-6 -6 M92 26 l6 -6 M28 90 l-6 6 M92 90 l6 6"/></g>`,
+phone:()=>`<rect x="34" y="10" width="52" height="98" rx="12" fill="#FFFDF8" class="o"/>
+  <rect x="40" y="22" width="40" height="66" rx="4" fill="#FFE4C4" class="o" stroke-width="2.2"/>
+  <text x="60" y="52" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="17" fill="#F07C6C">119</text>
+  <text x="60" y="76" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="17" fill="#5E8FD6">110</text>
+  <circle cx="60" cy="98" r="4" fill="none" class="o" stroke-width="2"/>`,
+book:()=>`<rect x="22" y="14" width="76" height="94" rx="6" fill="#F59E4C" class="o"/>
+  <path d="M30 14 v94" class="ln" stroke-width="2.4"/>
+  <rect x="42" y="30" width="46" height="22" rx="4" fill="#FFF1DE" class="o" stroke-width="2.2"/>
+  ${face(65,76,.8)}`,
+note:(c='#F59E4C')=>`<path d="M44 86 V30 l40 -10 v54" class="ln" stroke-width="5"/>
+  <ellipse cx="36" cy="88" rx="12" ry="9" fill="${c}" class="o"/><ellipse cx="76" cy="76" rx="12" ry="9" fill="${c}" class="o"/>
+  <path d="M44 42 l40 -10" class="ln" stroke-width="6"/>`
+};
+const art=(k,...a)=>svg(ART[k](...a));
+
+/* ---- illustration set from the 聲音的世界 page, redrawn with our ink outline + ^^ faces ---- */
+const A2=(()=>{
+const INK='#5A3A28';
+const svg=(inner,vb='0 0 120 120')=>`<svg viewBox="${vb}" aria-hidden="true">${inner}</svg>`;
+const G=(inner,x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${inner}</g>`;
+const face=(x,y,s=1,m='')=>{
+  let mouth=`<path d="M-3.5 6 q3.5 3.6 7 0" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>`;
+  if(m==='o') mouth=`<ellipse cy="7" rx="2.6" ry="3.2" fill="${INK}" stroke="none"/>`;
+  if(m==='open'||m==='cry') mouth=`<path d="M-5 5q5 9 10 0z" fill="#E8657A" stroke="${INK}" stroke-width="2"/>`;
+  if(m==='worry') mouth=`<path d="M-4 8q4-4 8 0" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`;
+  if(m==='none'||m==='shh') mouth='';
+  const eyes=(m==='cry'||m==='squeeze')?`<path d="M-11-3l5 3-5 3M11-3l-5 3 5 3" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`
+    :`<path d="M-13 0 q4.5 -6.5 9 0 M4 0 q4.5 -6.5 9 0" fill="none" stroke="${INK}" stroke-width="2.8" stroke-linecap="round"/>`;
+  const tears=m==='cry'?`<path d="M-12 4q-3 6 0 9 3-3 0-9zM12 4q-3 6 0 9 3-3 0-9z" fill="#7EC8F5" stroke="none"/>`:'';
+  return `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="-14" cy="8" rx="5" ry="3.2" fill="#F7A1A8" opacity=".9" stroke="none"/><ellipse cx="14" cy="8" rx="5" ry="3.2" fill="#F7A1A8" opacity=".9" stroke="none"/>${eyes}${mouth}${tears}</g>`;
+};
+const shade=(rx=30)=>`<ellipse cx="60" cy="113" rx="${rx}" ry="4.5" fill="#E9CFAF" opacity=".8" stroke="none"/>`;
+const NOTE=(c='#B79AE8')=>`<ellipse cx="22" cy="48" rx="11" ry="8.5" fill="${c}"/><rect x="29" y="10" width="5" height="38" fill="${c}"/><path d="M29 10Q48 10 54 26 44 18 34 20z" fill="${c}"/>`;
+const arcs=(x,y,c='#FF8FAB',flip=false)=>`<path d="M${x} ${y-8}q8 8 0 16M${x+9} ${y-16}q15 16 0 32" transform="${flip?`translate(${2*x} 0) scale(-1 1)`:''}" stroke="${c}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+const cloud=(f='#fff')=>`<g fill="${f}"><circle cx="40" cy="56" r="20"/><circle cx="64" cy="44" r="26"/><circle cx="88" cy="58" r="18"/><rect x="28" y="54" width="72" height="24" rx="12"/></g>`;
+const drop=(x,y,c='#7EC8F5')=>`<path d="M${x} ${y}q-6 9-6 13a6 6 0 0 0 12 0q0-4-6-13z" fill="${c}"/>`;
+const wheel=(x,y,r=10)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#5A6078"/><circle cx="${x}" cy="${y}" r="${r*.42}" fill="#E8EAF4"/>`;
+const leafS=(c,d)=>`<path d="M0 0C14-14 34-14 46 0 34 14 14 14 0 0z" fill="${c}"/><path d="M4 0H40" stroke="${d}" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>`;
+const kid=(x,y,s,hair='#5B4636',skin='#FFDDBE',shirt='#7EC8F5',m='')=>G(`<path d="M-22 58q0-24 22-24 22 0 22 24z" fill="${shirt}"/><circle r="24" fill="${skin}"/><path d="M-24-2q0-26 24-26 24 0 24 26-8-14-24-14-16 0-24 14z" fill="${hair}"/>`+face(0,6,.8,m),x,y,s);
+const sparkle=(x,y,s=1,c='#FFC94D')=>G(`<path d="M0-10L3-3 10 0 3 3 0 10-3 3-10 0-3-3z" fill="${c}"/>`,x,y,s);
+
+const A={
+  bunny:()=>shade(26)+`<g fill="#FFF3E4"><ellipse cx="44" cy="28" rx="11" ry="26" transform="rotate(-12 44 28)"/><ellipse cx="76" cy="28" rx="11" ry="26" transform="rotate(12 76 28)"/></g>
+    <g fill="#FFC6D6"><ellipse cx="44" cy="30" rx="5" ry="17" transform="rotate(-12 44 30)"/><ellipse cx="76" cy="30" rx="5" ry="17" transform="rotate(12 76 30)"/></g>
+    <ellipse cx="60" cy="96" rx="22" ry="16" fill="#FFF3E4"/><circle cx="60" cy="70" r="30" fill="#FFF3E4"/><ellipse cx="60" cy="78" rx="6" ry="4" fill="#FFC6D6"/>`+face(60,68),
+  bird:()=>shade(22)+`<path d="M54 92v14M66 92v14" stroke="#E59B3A" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="64" r="30" fill="#7EC8F5"/><ellipse cx="66" cy="76" rx="18" ry="13" fill="#CDEBFF"/>
+    <ellipse cx="44" cy="70" rx="14" ry="10" transform="rotate(-25 44 70)" fill="#5BB0EA"/><path d="M89 60l15 5-15 6z" fill="#FFB547"/><path d="M56 36q2-13 13-9-7 2-7 11z" fill="#5BB0EA"/>`+face(68,60,.8)+G(NOTE(),88,4,.42),
+  stream:()=>`<path d="M0 74Q30 50 62 70T120 66V100H0z" fill="#BFE8C2"/><path d="M2 92q14-9 28 0t29 0 29 0 30 0v18H2z" fill="#7EC8F5"/>
+    <path d="M14 100q8-5 16 0M60 102q8-5 16 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="32" cy="92" rx="18" ry="11" fill="#C9C0D6"/><ellipse cx="94" cy="96" rx="12" ry="7" fill="#DCD5E6"/>
+    <path d="M100 86q-2-16 4-26M106 86q2-12 10-18" stroke="#6FBF73" stroke-width="4" fill="none" stroke-linecap="round"/>`+face(32,90,.55)+sparkle(70,40,.8,'#9FD3FF'),
+  waves:(m='')=>`<path d="M6 104Q10 50 58 44q32-2 42 28-15-13-30-2-10 10 2 28z" fill="#5BB0EA"/><path d="M20 102Q24 64 58 56q20-2 29 12-13-4-21 4-6 9 0 28z" fill="#7EC8F5"/>
+    <circle cx="88" cy="58" r="6" fill="#fff"/><circle cx="98" cy="66" r="5" fill="#fff"/><circle cx="80" cy="52" r="4" fill="#fff"/><rect x="2" y="100" width="116" height="12" rx="6" fill="#5BB0EA"/>`+face(48,80,.85,m),
+  rain:()=>cloud('#fff')+face(62,54)+drop(38,86)+drop(62,94)+drop(86,86),
+  heavyrain:()=>cloud('#B8C3DA')+face(62,54,1,'worry')+drop(30,84,'#5BB0EA')+drop(48,92,'#5BB0EA')+drop(66,84,'#5BB0EA')+drop(84,92,'#5BB0EA')+drop(100,82,'#5BB0EA'),
+  thunder:()=>cloud('#C9D0E2')+`<path d="M70 62L54 88h13l-9 24 27-33H72l11-17z" fill="#FFC94D"/>`+face(58,50,1,'o'),
+  leaves:()=>G(leafS('#6FBF73','#3F8F55'),12,46,1.1)+G(leafS('#B5E58B','#6FA84A'),56,78,.9)+`<path d="M60 30q12-8 24 0 8 6 0 10M14 92q10-6 20 0" stroke="#9FD3FF" stroke-width="4" fill="none" stroke-linecap="round"/>`+face(36,46,.6),
+  chimes:()=>`<rect x="24" y="14" width="72" height="8" rx="4" fill="#C79A6B"/><path d="M60 4v10M34 22v26M50 22v40M70 22v34M86 22v22" stroke="${INK}" stroke-width="2" opacity=".5"/>
+    <rect x="29" y="46" width="10" height="26" rx="5" fill="#9FD3FF"/><rect x="65" y="54" width="10" height="30" rx="5" fill="#FFB3C7"/><rect x="81" y="42" width="10" height="22" rx="5" fill="#B5E58B"/>
+    <path d="M36 92q0-32 14-32 14 0 14 32z" fill="#FFD86B"/><circle cx="50" cy="96" r="4" fill="#E5A92B"/>`+face(50,80,.55)+sparkle(100,82,.8)+sparkle(18,90,.6,'#FF9EBB'),
+  cat:()=>shade(26)+`<path d="M28 52L32 18l24 20zM92 52L88 18 64 38z" fill="#FFC98A"/><path d="M34 42l2-14 12 10zM86 42l-2-14-12 10z" fill="#FFB3C7"/>
+    <ellipse cx="60" cy="68" rx="36" ry="32" fill="#FFD9A8"/><ellipse cx="60" cy="78" rx="5" ry="3.5" fill="#FF8FAB"/>
+    <path d="M18 72h18M20 82l16-4M102 72H84M100 82l-16-4" stroke="${INK}" stroke-width="2" stroke-linecap="round" opacity=".55"/>`+face(60,66,1,'sleep')+`<path d="M98 26q8 4 0 8q-8 4 0 8" stroke="#FF8FAB" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  cricket:()=>shade(34)+`<path d="M44 82l-12 22M58 84l-4 22M70 84l6 22" stroke="#4FA35A" stroke-width="4" stroke-linecap="round"/><ellipse cx="54" cy="72" rx="32" ry="17" fill="#8FD67E"/>
+    <path d="M26 68q28-18 54-2" fill="#6FBF73"/><circle cx="88" cy="64" r="16" fill="#B5E58B"/><path d="M92 50q10-26 22-30M86 49q0-26 8-36" stroke="#4FA35A" stroke-width="2.5" fill="none" stroke-linecap="round"/>`+face(90,66,.6)+G(NOTE('#6FBF73'),8,10,.4),
+  triangle:()=>`<path d="M60 18v-8" stroke="${INK}" stroke-width="2" opacity=".5"/><path d="M60 18L94 86H26L46 46" fill="none" stroke="#B9C0D4" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M14 30l30 24" stroke="#C79A6B" stroke-width="5" stroke-linecap="round"/><circle cx="44" cy="54" r="4" fill="#B9C0D4"/>`+face(60,70,.6)+arcs(98,42),
+  baby:(cry)=>shade(24)+`<circle cx="60" cy="64" r="34" fill="#FFE2C6"/><path d="M58 30q-8-12 4-14 8 0 2 8" fill="none" stroke="#C79A6B" stroke-width="4" stroke-linecap="round"/><ellipse cx="60" cy="104" rx="26" ry="8" fill="#FFC6D6"/>`+face(60,66,1.05,cry?'cry':'')+(cry?'':G(NOTE('#FFB3C7'),90,12,.4)),
+  dog:()=>shade(26)+`<path d="M30 40q-18 8-10 40 12 2 16-12zM90 40q18 8 10 40-12 2-16-12z" fill="#C9905E"/><ellipse cx="60" cy="64" rx="32" ry="30" fill="#F0C995"/>
+    <ellipse cx="60" cy="78" rx="15" ry="11" fill="#FFF1DD"/><ellipse cx="60" cy="72" rx="6" ry="4.5" fill="${INK}"/><path d="M55 84q5 10 10 0z" fill="#FF8FAB"/>`+face(60,60,1,'none')+arcs(96,30,'#C9905E'),
+  bee:()=>`<ellipse cx="50" cy="34" rx="13" ry="18" fill="#EAF6FF"/><ellipse cx="68" cy="32" rx="13" ry="18" fill="#DDEFFF"/>
+    <ellipse cx="58" cy="66" rx="36" ry="26" fill="#FFD34D"/><path d="M62 41q10 25 0 50h11q10-25 0-50zM82 46q7 20 0 40h7q8-20 0-40z" fill="#4A4060"/>
+    <path d="M94 64l12 2-12 4z" fill="#4A4060"/><path d="M30 44q-6-14-14-16M38 42q0-14-6-20" stroke="${INK}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`+face(40,66,.9),
+  clock:()=>shade(26)+`<path d="M38 96l-8 14M82 96l8 14" stroke="#C79A6B" stroke-width="5" stroke-linecap="round"/><circle cx="60" cy="58" r="40" fill="#FFB3C7"/><circle cx="60" cy="58" r="32" fill="#fff"/>
+    <g fill="${INK}" opacity=".5"><rect x="58" y="29" width="4" height="7" rx="2"/><rect x="58" y="80" width="4" height="7" rx="2"/><rect x="31" y="56" width="7" height="4" rx="2"/><rect x="82" y="56" width="7" height="4" rx="2"/></g>
+    <path d="M60 52V36M60 52h12" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/><circle cx="60" cy="52" r="3" fill="${INK}"/>`+face(60,70,.6),
+  tooth:()=>`<path d="M30 46q0-26 28-20 28-6 28 20 0 18-8 36-4 10-9-4-4-10-11-10-7 0-11 10-5 14-9 4-8-18-8-36z" fill="#fff"/>`+face(58,50,.75)+
+    `<g transform="rotate(-35 90 78)"><rect x="66" y="74" width="50" height="9" rx="4.5" fill="#7EC8F5"/><rect x="66" y="64" width="14" height="10" rx="3" fill="#EAF6FF"/></g><circle cx="22" cy="24" r="7" fill="#EAF6FF"/><circle cx="96" cy="22" r="5" fill="#EAF6FF"/>`,
+  toilet:()=>shade(22)+`<rect x="34" y="12" width="52" height="34" rx="8" fill="#fff"/><rect x="74" y="20" width="10" height="5" rx="2.5" fill="#B9C0D4"/>
+    <path d="M26 54h68q0 26-24 30l4 24H46l4-24Q26 80 26 54z" fill="#fff"/><ellipse cx="60" cy="54" rx="36" ry="8" fill="#BFE6FF"/>`+face(60,30,.75)+`<path d="M98 30q8 6 0 12" stroke="#7EC8F5" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+  soap:()=>shade(30)+`<rect x="24" y="56" width="72" height="46" rx="18" fill="#FFB3C7"/><rect x="32" y="60" width="56" height="10" rx="5" fill="#fff" opacity=".45"/>`+face(60,82)+
+    `<circle cx="34" cy="38" r="12" fill="#EAF6FF"/><circle cx="58" cy="26" r="9" fill="#DDEFFF"/><circle cx="84" cy="40" r="10" fill="#EAF6FF"/><circle cx="31" cy="34" r="3" fill="#fff"/><circle cx="81" cy="36" r="3" fill="#fff"/>`,
+  carrot:()=>`<rect x="8" y="94" width="104" height="14" rx="7" fill="#E7C49A"/><path d="M24 92L80 48q14-8 18 6 4 14-10 18z" fill="#FF9F45"/>
+    <path d="M90 48q4-20 18-20M92 52q16-8 22 4" stroke="#6FBF73" stroke-width="5" fill="none" stroke-linecap="round"/>`+face(74,66,.65)+
+    `<path d="M14 40l40-20q8-3 6 5L28 54z" fill="#DCE2EE"/><rect x="2" y="44" width="20" height="9" rx="4" transform="rotate(-27 12 48)" fill="#C79A6B"/>`,
+  keyboard:()=>shade(44)+`<rect x="10" y="44" width="100" height="56" rx="12" fill="#D7DCF0"/>`+
+    [0,1,2].map(r=>[0,1,2,3,4,5].map(c=>`<rect x="${18+c*15}" y="${52+r*13}" width="12" height="10" rx="3" fill="#fff"/>`).join('')).join('')+`<rect x="36" y="90" width="48" height="6" rx="3" fill="#fff"/>`+face(60,28,.75)+`<path d="M40 22q-6 4-4 10M80 22q6 4 4 10" stroke="#B79AE8" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  sneeze:()=>shade(24)+`<circle cx="52" cy="62" r="36" fill="#FFE2C6"/><path d="M20 52q2-30 32-32 30 2 34 28-14-14-34-14-20 0-32 18z" fill="#6B5A4B"/>`+face(50,64,1,'squeeze')+
+    `<path d="M48 76q4 6 8 0" fill="#E8657A"/><rect x="74" y="72" width="34" height="28" rx="6" fill="#fff"/><path d="M80 72q8-8 18 0" fill="#fff"/>`+[[96,40],[106,52],[100,30],[110,40]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3" fill="#9FD3FF"/>`).join(''),
+  traffic:()=>shade(16)+`<rect x="56" y="88" width="8" height="24" fill="#8A90A8"/><rect x="38" y="8" width="44" height="84" rx="18" fill="#5A6078"/>
+    <circle cx="60" cy="28" r="10" fill="#FF7B7B"/><circle cx="60" cy="50" r="10" fill="#FFD34D"/><circle cx="60" cy="72" r="10" fill="#6FCF9F"/>`+face(60,72,.42),
+  scooter:()=>shade(40)+`<path d="M22 82q0-18 18-18h28l12-38h10l-10 52q-2 6-8 6H22z" fill="#FF8FAB"/><rect x="34" y="56" width="26" height="8" rx="4" fill="#5A6078"/>
+    <path d="M80 26h16" stroke="#5A6078" stroke-width="5" stroke-linecap="round"/>`+wheel(34,90,12)+wheel(88,90,12)+face(50,76,.55)+`<path d="M8 70h10M4 80h12" stroke="#B9C0D4" stroke-width="4" stroke-linecap="round"/>`,
+  heli:()=>`<path d="M14 26h80M54 26v12" stroke="#5A6078" stroke-width="5" stroke-linecap="round"/><path d="M28 64H10l-4-12" stroke="#FFC94D" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <ellipse cx="56" cy="64" rx="32" ry="24" fill="#FFC94D"/><path d="M62 44q24 2 26 22H62z" fill="#BFE6FF"/><path d="M36 100h44M44 88v12M70 88v12" stroke="#5A6078" stroke-width="4" stroke-linecap="round"/>`+face(46,68,.8),
+  schoolbell:()=>shade(26)+`<circle cx="60" cy="20" r="6" fill="#E5A92B"/><path d="M28 86q0-60 32-64 32 4 32 64h8v8H20v-8z" fill="#FFC94D"/><circle cx="60" cy="102" r="7" fill="#E5A92B"/>`+face(60,64)+arcs(104,52)+arcs(16,52,'#FF8FAB',true),
+  garbage:()=>shade(44)+`<rect x="6" y="40" width="68" height="48" rx="8" fill="#FFE17A"/><path d="M74 54h18l14 16v18H74z" fill="#FFE17A"/><path d="M79 58h11l9 11H79z" fill="#BFE6FF"/>
+    <rect x="12" y="48" width="56" height="6" rx="3" fill="#6FCF9F"/>`+wheel(28,92)+wheel(88,92)+face(40,68,.85)+G(NOTE('#B79AE8'),10,0,.4)+G(NOTE('#FF8FAB'),52,-6,.36),
+  alarmclock:()=>shade(26)+`<path d="M40 98l-8 12M80 98l8 12" stroke="#E86A6A" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="28" r="12" fill="#FF8F8F"/><circle cx="88" cy="28" r="12" fill="#FF8F8F"/>
+    <circle cx="60" cy="64" r="36" fill="#FF9E9E"/><circle cx="60" cy="64" r="27" fill="#fff"/><path d="M60 58V44M60 58l10 4" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`+face(60,76,.55)+`<path d="M10 52l-6-2M10 64H2M110 52l6-2M110 64h8" stroke="#FF8F8F" stroke-width="4" stroke-linecap="round"/>`,
+  phone:()=>shade(34)+`<path d="M20 104q2-38 40-38 38 0 40 38z" fill="#FFB3C7"/><path d="M14 52q46-34 92 0l-10 14q-36-22-72 0z" fill="#FF8FAB"/>`+face(60,88,.75)+`<path d="M18 30l-8-6M60 18V8M102 30l8-6" stroke="#FF8FAB" stroke-width="4" stroke-linecap="round"/>`,
+  reverse:()=>shade(44)+`<path d="M14 54h18l10-14h44v48H14z" fill="#8FD9C8"/><path d="M20 58h10l8-12h10v12z" fill="#BFE6FF"/>`+wheel(32,92)+wheel(76,92)+face(64,66,.8)+
+    `<path d="M112 30H90M96 22l-8 8 8 8" stroke="#FF7B6B" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`+arcs(100,64,'#FFC94D'),
+  car:()=>shade(44)+`<path d="M8 82q0-16 14-18l14-20h40l18 20q16 2 16 18v6H8z" fill="#7EC8F5"/><path d="M40 48h14v16H30zM60 48h14l12 16H60z" fill="#E6F4FF"/>`+wheel(30,90)+wheel(90,90)+face(58,76,.6)+`<path d="M110 50l8-4M112 60h8" stroke="#FFC94D" stroke-width="4" stroke-linecap="round"/>`,
+  kettle:()=>shade(28)+`<path d="M38 52q20-26 44 0" stroke="#5A6078" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M84 74l18-18 5 5-15 22z" fill="#8FD9C8"/>
+    <path d="M26 106q-6-50 34-52 40 2 34 52z" fill="#8FD9C8"/><ellipse cx="60" cy="56" rx="20" ry="5" fill="#6FC2AE"/>`+face(60,82)+`<path d="M104 46q-6-6 0-12t0-12" stroke="#C9D0E2" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+  firetruck:()=>shade(48)+`<rect x="4" y="44" width="76" height="44" rx="8" fill="#FF6B5B"/><path d="M80 54h20l16 18v16H80z" fill="#FF6B5B"/><path d="M85 58h13l11 13H85z" fill="#BFE6FF"/>
+    <path d="M10 36h64M10 28h64M20 28v8M34 28v8M48 28v8M62 28v8" stroke="#C9D0E2" stroke-width="4" stroke-linecap="round"/><rect x="88" y="44" width="12" height="9" rx="4" fill="#5B9BE8"/>
+    <rect x="10" y="74" width="66" height="5" rx="2.5" fill="#fff" opacity=".7"/>`+wheel(26,92)+wheel(94,92)+face(42,62,.85),
+  ambulance:()=>shade(48)+`<rect x="4" y="38" width="78" height="50" rx="8" fill="#fff"/><path d="M82 52h18l16 18v18H82z" fill="#fff"/><path d="M87 56h12l11 13H87z" fill="#BFE6FF"/>
+    <rect x="4" y="74" width="112" height="6" fill="#FF7B7B"/><rect x="88" y="42" width="12" height="9" rx="4" fill="#FF6B6B"/>
+    <path d="M22 48h8v-8h8v8h8v8h-8v8h-8v-8h-8z" fill="#FF6B6B"/>`+wheel(26,92)+wheel(94,92)+face(64,58,.75),
+  police:()=>shade(48)+`<path d="M6 82q0-16 14-18l16-22h46l18 22q16 2 16 18v8H6z" fill="#fff"/><path d="M40 46h16v18H30zM62 46h16l13 18H62z" fill="#BFE6FF"/>
+    <rect x="6" y="72" width="110" height="7" fill="#5B9BE8"/><rect x="48" y="32" width="12" height="10" rx="4" fill="#FF6B6B"/><rect x="60" y="32" width="12" height="10" rx="4" fill="#5B9BE8"/>`+wheel(30,92)+wheel(92,92)+face(60,60,.55),
+  siren:()=>shade(18)+`<rect x="56" y="62" width="8" height="48" fill="#8A90A8"/><path d="M58 40L18 24v40z" fill="#FFC94D"/><path d="M62 40l40-16v40z" fill="#FFC94D"/>
+    <rect x="44" y="20" width="32" height="42" rx="10" fill="#FF9F45"/>`+face(60,42,.6)+arcs(106,44,'#FF7B6B')+arcs(14,44,'#FF7B6B',true),
+  sun:()=>{ let r=''; for(let i=0;i<8;i++) r+=`<path d="M60 8V18" transform="rotate(${i*45} 60 60)"/>`; return `<g stroke="#FFC94D" stroke-width="7" stroke-linecap="round">${r}</g><circle cx="60" cy="60" r="31" fill="#FFD86B"/>`+face(60,60); },
+  dam:()=>`<path d="M0 46h40v66H0z" fill="#7EC8F5"/><path d="M34 34h18l16 78H34z" fill="#D2CCE0"/><path d="M50 52q26 10 30 60" stroke="#9FD3FF" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M62 102q22-8 58-2v12H62z" fill="#7EC8F5"/>`+face(46,72,.6)+`<rect x="88" y="20" width="26" height="22" rx="5" fill="#FFC94D"/><path d="M101 42v24" stroke="#8A90A8" stroke-width="4"/>`+arcs(78,30,'#FF7B6B',true),
+  book:()=>shade(28)+`<rect x="24" y="10" width="72" height="98" rx="8" fill="#FF9F45"/><rect x="24" y="10" width="14" height="98" rx="6" fill="#E9822C"/>
+    <circle cx="66" cy="48" r="20" fill="#FFF3E0"/><path d="M57 48l7 7 12-14" stroke="#FF8A2C" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`+face(66,84,.6),
+  shh:()=>shade(24)+`<circle cx="60" cy="60" r="36" fill="#FFE2C6"/><path d="M26 50q4-28 34-28 30 0 34 28-14-12-34-12-20 0-34 12z" fill="#6B5A4B"/>`+face(60,58,1,'shh')+`<rect x="56" y="62" width="9" height="30" rx="4.5" fill="#FFCFA6"/><ellipse cx="60" cy="68" rx="5" ry="3" fill="#E8657A"/>`,
+  mouse:()=>shade(26)+`<circle cx="32" cy="38" r="20" fill="#D7D7EA"/><circle cx="88" cy="38" r="20" fill="#D7D7EA"/><circle cx="32" cy="38" r="11" fill="#FFC6D6"/><circle cx="88" cy="38" r="11" fill="#FFC6D6"/>
+    <ellipse cx="60" cy="70" rx="32" ry="30" fill="#E6E6F3"/><ellipse cx="60" cy="80" rx="4" ry="3" fill="#FF8FAB"/><path d="M24 80h14M26 90l12-4M96 80H82M94 90l-12-4" stroke="${INK}" stroke-width="2" opacity=".45" stroke-linecap="round"/>`+face(60,70),
+  lion:()=>shade(28)+`<g fill="#FF9F45">${[0,1,2,3,4,5,6,7,8,9].map(i=>`<circle cx="${60+38*Math.cos(i*Math.PI/5)}" cy="${62+38*Math.sin(i*Math.PI/5)}" r="15"/>`).join('')}</g><circle cx="60" cy="62" r="38" fill="#FF9F45"/>
+    <circle cx="60" cy="62" r="28" fill="#FFD86B"/><path d="M56 70h8l-4 4z" fill="${INK}"/>`+face(60,62,1,'open'),
+  ear:()=>`<path d="M60 14q-34-2-34 34 0 14 10 22 6 6 4 16-2 10 9 10 14 0 16-20 15-14 15-32 0-28-20-30z" fill="#FFD3AE"/><path d="M54 34q-14 0-12 16 2 8 9 10" stroke="#D99A70" stroke-width="4" fill="none" stroke-linecap="round"/>`+arcs(92,52,'#B79AE8'),
+  headphones:()=>`<path d="M24 66q0-46 36-46 36 0 36 46" stroke="#B79AE8" stroke-width="9" fill="none" stroke-linecap="round"/><rect x="12" y="60" width="24" height="38" rx="11" fill="#FF8FAB"/><rect x="84" y="60" width="24" height="38" rx="11" fill="#FF8FAB"/>`+face(60,78,.6)+G(NOTE('#7EC8F5'),46,30,.35),
+  speaker:()=>shade(24)+`<path d="M16 46h20l26-22v74L36 76H16z" fill="#B79AE8"/>`+face(36,60,.55)+arcs(74,60,'#FF8FAB'),
+  megaphone:()=>`<rect x="10" y="50" width="16" height="22" rx="5" fill="#FFC94D"/><path d="M24 48l52-24v74L24 74z" fill="#FF9F45"/><ellipse cx="76" cy="61" rx="8" ry="37" fill="#FFB87A"/>`+face(48,61,.6)+`<path d="M92 34l14-8M96 61h16M92 88l14 8" stroke="#FF7B6B" stroke-width="5" stroke-linecap="round"/>`,
+  noisy:()=>kid(60,62,1.2,'#5B4636','#FFDDBE','#FFB3C7','open')+`<path d="M8 30l8 6-8 6 8 6M112 30l-8 6 8 6-8 6" stroke="#FF7B6B" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+  beacon:()=>shade(26)+`<rect x="30" y="88" width="60" height="16" rx="5" fill="#8A90A8"/><path d="M36 90V62q0-26 24-26 24 0 24 26v28z" fill="#FF6B6B"/><path d="M46 60q0-12 10-14" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".6"/>`+face(60,72,.6)+
+    `<path d="M60 22V8M28 34l-10-10M92 34l10-10M16 64H4M104 64h12" stroke="#FFC94D" stroke-width="5" stroke-linecap="round"/>`,
+  shield:()=>shade(24)+`<path d="M60 10l38 12v28q0 34-38 56-38-22-38-56V22z" fill="#6FCF9F"/><path d="M60 22l26 8v20q0 24-26 42z" fill="#8FDDB4"/>`+face(60,62),
+  sos:()=>`<path d="M16 22h88q8 0 8 8v40q0 8-8 8H52l-18 18V78H16q-8 0-8-8V30q0-8 8-8z" fill="#FF8FAB"/><text x="60" y="62" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="30" fill="#fff">SOS</text>`,
+  books:()=>shade(34)+`<rect x="22" y="80" width="78" height="20" rx="5" fill="#7EC8F5"/><rect x="18" y="60" width="78" height="20" rx="5" fill="#FF9EBB"/><rect x="26" y="40" width="70" height="20" rx="5" fill="#FFC94D"/>
+    <rect x="22" y="84" width="74" height="4" fill="#fff" opacity=".6"/><rect x="18" y="64" width="74" height="4" fill="#fff" opacity=".6"/>`+face(61,50,.55)+G(leafS('#6FBF73','#3F8F55'),70,30,.5),
+  test:()=>shade(26)+`<rect x="22" y="12" width="60" height="88" rx="8" fill="#fff"/><path d="M32 32h40M32 46h40M32 60h28M32 74h36" stroke="#C9D0E2" stroke-width="4" stroke-linecap="round"/>
+    <g transform="rotate(40 86 74)"><rect x="80" y="36" width="14" height="60" rx="3" fill="#FFC94D"/><path d="M80 96h14l-7 14z" fill="#FFD9A8"/><rect x="80" y="30" width="14" height="8" rx="3" fill="#FF9EBB"/></g>`+face(48,86,.5),
+  moon:()=>`<path d="M66 14a42 42 0 1 0 34 62 34 34 0 1 1-34-62z" fill="#FFE17A"/>`+face(48,64,.85,'sleep')+`<text x="80" y="34" font-family="Fredoka,sans-serif" font-weight="700" font-size="20" fill="#B79AE8">z</text><text x="94" y="20" font-family="Fredoka,sans-serif" font-weight="700" font-size="14" fill="#B79AE8">z</text>`,
+  hospital:()=>shade(40)+`<rect x="18" y="34" width="84" height="76" rx="6" fill="#fff"/><rect x="44" y="10" width="32" height="28" rx="6" fill="#fff"/><path d="M56 14h8v8h8v8h-8v6h-8v-6h-8v-8h8z" fill="#FF6B6B"/>
+    <g fill="#BFE6FF"><rect x="28" y="46" width="16" height="14" rx="3"/><rect x="76" y="46" width="16" height="14" rx="3"/><rect x="28" y="70" width="16" height="14" rx="3"/><rect x="76" y="70" width="16" height="14" rx="3"/></g><rect x="50" y="84" width="20" height="26" rx="4" fill="#9FD3FF"/>`+face(60,62,.55),
+  popcorn:()=>shade(24)+`<g fill="#FFF6DA">${[[36,36],[50,26],[64,30],[78,34],[44,46],[70,44],[58,40]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="11"/>`).join('')}</g>
+    <path d="M28 46h64l-8 62H36z" fill="#fff"/><path d="M38 46l4 62M60 46v62M82 46l-4 62" stroke="#FF6B6B" stroke-width="7"/>`+face(60,78,.6),
+  train:()=>`<path d="M30 112l10-14M90 112l-10-14" stroke="#8A90A8" stroke-width="5" stroke-linecap="round"/><rect x="24" y="10" width="72" height="92" rx="20" fill="#9FD3FF"/>
+    <rect x="32" y="20" width="56" height="30" rx="8" fill="#EAF6FF"/><rect x="24" y="62" width="72" height="8" fill="#5B9BE8"/><circle cx="38" cy="86" r="5" fill="#FFE17A"/><circle cx="82" cy="86" r="5" fill="#FFE17A"/>`+face(60,40,.75),
+  group:()=>kid(36,58,.95,'#5B4636','#FFDDBE','#7EC8F5')+kid(86,60,.9,'#2F3450','#F5CFA8','#FFB3C7')+`<path d="M52 14h22q6 0 6 6v8q0 6-6 6h-8l-6 6v-6h-8q-6 0-6-6v-8q0-6 6-6z" fill="#fff"/><circle cx="57" cy="24" r="2" fill="${INK}"/><circle cx="63" cy="24" r="2" fill="${INK}"/><circle cx="69" cy="24" r="2" fill="${INK}"/>`,
+  bento:()=>shade(44)+`<rect x="10" y="40" width="100" height="64" rx="14" fill="#FF9EBB"/><rect x="18" y="48" width="84" height="48" rx="8" fill="#FFF8EE"/>
+    <path d="M30 90l16-30 16 30z" fill="#fff"/><rect x="36" y="80" width="20" height="10" fill="#4A4060"/>`+face(46,74,.45)+`<circle cx="76" cy="62" r="9" fill="#fff"/><circle cx="76" cy="62" r="5" fill="#FFC94D"/><circle cx="84" cy="84" r="7" fill="#6FBF73"/><circle cx="74" cy="86" r="6" fill="#8FD67E"/>`,
+  showtell:()=>kid(54,62,1.2,'#5B4636','#FFDDBE','#FFC94D')+`<path d="M78 86q12-20 14-52" stroke="#FFDDBE" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="92" cy="30" r="8" fill="#FFDDBE"/>`+sparkle(106,16,.8),
+  ball:()=>shade(28)+`<circle cx="60" cy="62" r="40" fill="#fff"/><path d="M60 40l12 9-5 14H53l-5-14z" fill="${INK}" opacity=".85"/><path d="M24 54l10 4M96 54l-10 4M40 94l6-10M80 94l-6-10" stroke="${INK}" stroke-width="3" opacity=".4" stroke-linecap="round"/>`+face(60,80,.6)+`<path d="M8 30h14M4 42h12" stroke="#B9C0D4" stroke-width="4" stroke-linecap="round"/>`,
+  bottle:()=>shade(20)+`<rect x="48" y="8" width="24" height="14" rx="4" fill="#5B9BE8"/><rect x="34" y="22" width="52" height="88" rx="16" fill="#BFE6FF"/><rect x="34" y="56" width="52" height="28" fill="#7EC8F5"/>`+face(60,70,.7)+`<rect x="42" y="30" width="6" height="20" rx="3" fill="#fff" opacity=".7"/>`,
+  can:()=>shade(26)+`<rect x="28" y="22" width="64" height="84" rx="8" fill="#FF9F45"/><ellipse cx="60" cy="22" rx="32" ry="8" fill="#FFC27E"/><rect x="28" y="50" width="64" height="32" fill="#FFF3E0"/>`+face(60,66,.7),
+  flashlight:()=>`<path d="M80 40l38-18v76L80 80z" fill="#FFF3B0"/><rect x="10" y="44" width="56" height="32" rx="10" fill="#8FD9C8"/><path d="M62 38h12q6 0 6 6v32q0 6-6 6H62z" fill="#6FC2AE"/><rect x="28" y="40" width="12" height="6" rx="3" fill="#FF7B6B"/>`+face(38,62,.65),
+  radio:()=>shade(40)+`<path d="M82 40l16-28" stroke="#8A90A8" stroke-width="4" stroke-linecap="round"/><rect x="10" y="40" width="100" height="64" rx="14" fill="#B79AE8"/><circle cx="38" cy="72" r="18" fill="#EDE6FF"/>
+    ${[[32,66],[44,66],[32,78],[44,78],[38,72]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.6" fill="#B79AE8"/>`).join('')}<rect x="66" y="52" width="34" height="12" rx="4" fill="#FFF3B0"/>`+face(83,84,.55),
+  firstaid:()=>shade(36)+`<path d="M46 30v-8q0-6 6-6h16q6 0 6 6v8" stroke="#8A90A8" stroke-width="5" fill="none"/><rect x="14" y="30" width="92" height="74" rx="12" fill="#fff"/>
+    <path d="M52 44h16v14h14v16H68v14H52V74H38V58h14z" fill="#FF6B6B"/>`+face(60,96,.45),
+  mask:()=>`<path d="M22 48q-20 6 0 32M98 48q20 6 0 32" stroke="#9FD3FF" stroke-width="4" fill="none"/><path d="M22 44q38-14 76 0v34q-38 20-76 0z" fill="#EAF6FF"/>
+    <path d="M30 58h60M30 68h60" stroke="#BFE6FF" stroke-width="4" stroke-linecap="round"/>`+face(60,30,.6),
+  whistle:()=>`<path d="M14 40q-6-26 20-28" stroke="#FF8FAB" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="38" y="44" width="62" height="22" rx="6" fill="#FFC94D"/><circle cx="42" cy="70" r="26" fill="#FFC94D"/>
+    <rect x="70" y="44" width="10" height="8" fill="#E5A92B"/>`+face(42,72,.7)+arcs(104,56,'#FF8FAB'),
+  controller:()=>shade(40)+`<path d="M26 40h68q20 0 18 30-2 28-20 16l-12-10H40l-12 10Q10 98 8 70q-2-30 18-30z" fill="#B79AE8"/><path d="M26 56h16M34 48v16" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="84" cy="52" r="5" fill="#FF8FAB"/><circle cx="94" cy="62" r="5" fill="#FFC94D"/>`+face(60,62,.6),
+  abc:()=>shade(36)+`<path d="M24 40l16-14h60l-16 14z" fill="#FFD86B"/><path d="M84 40l16-14v62L84 102z" fill="#E5A92B"/><rect x="24" y="40" width="60" height="62" rx="4" fill="#FFC94D"/>
+    <text x="54" y="88" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="42" fill="#fff">A</text>`+sparkle(104,16,.8,'#FF8FAB'),
+  star:()=>`<path d="M60 14L73 45 107 48 81 70 89 103 60 85 31 103 39 70 13 48 47 45z" fill="#FFC94D" stroke="#FFC94D" stroke-width="9" stroke-linejoin="round"/>`+face(60,62,.85),
+  detective:()=>shade(30)+`<circle cx="52" cy="54" r="30" fill="#CFE6FF"/><circle cx="52" cy="54" r="22" fill="#EAF6FF"/><path d="M74 76l26 26" stroke="#C79A6B" stroke-width="12" stroke-linecap="round"/>`+face(52,54,.8)+arcs(92,30,'#B79AE8'),
+  note:()=>G(NOTE('#B79AE8'),24,20,1.4),
+};
+A.babycry=()=>A.baby(true); A.wavesW=()=>A.waves('worry');
+return A;})();
+const art2=k=>svg(`<g class="ported">${A2[k]()}</g>`);
+
+
+/* mascot "Pip" — round bunny who loves listening */
+function mascot(){ // bunny head only: ears + round head + face
+  return `<path d="M70 74 q-26 -54 -4 -64 q20 -4 24 56z" fill="#FFF1DE" class="o"/>
+  <path d="M74 64 q-12 -34 -2 -42 q8 -2 10 38z" fill="#F7A1A8" opacity=".8"/>
+  <path d="M130 74 q26 -54 4 -64 q-20 -4 -24 56z" fill="#FFF1DE" class="o"/>
+  <path d="M126 64 q12 -34 2 -42 q-8 -2 -10 38z" fill="#F7A1A8" opacity=".8"/>
+  <ellipse cx="100" cy="124" rx="60" ry="54" fill="#FFF1DE" class="o"/>
+  ${face(100,124,1.6)}
+  <ellipse cx="100" cy="140" rx="5" ry="3.5" fill="#F7A1A8"/>`;
+}
+
+/* cover kid — listening with a hand at her ear, holding the little orange book (viewBox 200x200 like mascot) */
+function kidHero(){
+  return `<path d="M54 196 q0 -54 46 -54 q46 0 46 54z" fill="#F59E4C" class="o"/>
+  <path d="M86 146 l14 12 l14 -12" class="ln" stroke-width="2.6"/>
+  <path d="M136 160 q18 -20 22 -52" class="ln" stroke-width="12"/><path d="M136 160 q18 -20 22 -52" class="ln" stroke="#FFE0C2" stroke-width="6"/>
+  <circle cx="100" cy="94" r="46" fill="#FFE0C2" class="o"/>
+  <path d="M52 104 q-8 -62 48 -64 q56 2 48 64 q-6 -26 -18 -34 q-12 12 -30 8 q-16 -4 -22 -12 q-18 12 -26 38z" fill="#6B4A36" class="o"/>
+  <circle cx="146" cy="98" r="8" fill="#FFE0C2" class="o"/>
+  <path d="M150 92 q14 -8 14 8 q0 12 -12 12" fill="#FFE0C2" class="o"/>
+  <path d="M54 100 l-6 -14 q6 -6 12 0z" fill="#F7A1A8" class="o" stroke-width="2"/>
+  ${face(100,108,1.35)}
+  <g transform="translate(36 150) rotate(-10)"><rect x="0" y="0" width="34" height="42" rx="4" fill="#F59E4C" class="o"/><path d="M6 0 v42" class="ln" stroke-width="2"/><rect x="12" y="8" width="16" height="9" rx="2" fill="#FFF1DE" class="o" stroke-width="2"/></g>
+  <circle cx="70" cy="168" r="8" fill="#FFE0C2" class="o"/>
+  <g class="ln" stroke="#F59E4C" stroke-width="4"><path class="wave" d="M172 88 q8 10 0 20"/><path class="wave d2" d="M182 80 q14 18 0 36"/></g>`;
+}
+
+/* background street */
+function streetSVG(){
+  const house=(x,w,h,c,roof)=>`<rect x="${x}" y="${120-h}" width="${w}" height="${h}" fill="${c}" class="o" stroke-width="2.5"/>
+    <path d="M${x-6} ${124-h} L${x+w/2} ${96-h} L${x+w+6} ${124-h}z" fill="${roof}" class="o" stroke-width="2.5"/>
+    <rect x="${x+w*.2}" y="${132-h}" width="${w*.25}" height="${w*.22}" fill="#FFF7D6" class="o" stroke-width="2"/>
+    <rect x="${x+w*.58}" y="${132-h}" width="${w*.25}" height="${w*.22}" fill="#FFF7D6" class="o" stroke-width="2"/>`;
+  const tree=x=>`<path d="M${x} 120 v-26" class="ln" stroke-width="4"/><circle cx="${x}" cy="84" r="16" fill="#A8DCC8" class="o" stroke-width="2.5"/>`;
+  let g='';
+  const C=[['#FFD3B0','#F07C6C'],['#FFE9A8','#C9875A'],['#D6ECF5','#7EB6E6'],['#F9D7DA','#F59E4C']];
+  for(let i=0;i<14;i++){const [c,r]=C[i%4]; g+= i%3==2? tree(i*110+60) : house(i*110+20,64+(i%2)*14,48+(i*7%22),c,r);}
+  g+=`<rect x="0" y="120" width="1600" height="40" fill="#E9DCCB"/><path d="M0 120 h1600" class="ln" stroke-width="2.5"/>`;
+  for(let i=0;i<40;i++) g+=`<rect x="${i*42+10}" y="136" width="22" height="5" rx="2" fill="#fff"/>`;
+  return `<svg viewBox="0 0 1600 160" preserveAspectRatio="xMidYMax slice"><g filter="url(#rough2)">${g}</g></svg>`;
+}
+
+const ICON={
+  music:`<svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="3" fill="#F59E4C" stroke="${INK}" stroke-width="2"/><circle cx="17.5" cy="16" r="3" fill="#F59E4C" stroke="${INK}" stroke-width="2"/></svg>`,
+  musicOff:`<svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="3" fill="#ddd" stroke="${INK}" stroke-width="2"/><circle cx="17.5" cy="16" r="3" fill="#ddd" stroke="${INK}" stroke-width="2"/><path d="M3 3l18 18" stroke="#F07C6C" stroke-width="2.6" stroke-linecap="round"/></svg>`,
+  fs:`<svg viewBox="0 0 24 24" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>`,
+  fsOff:`<svg viewBox="0 0 24 24" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>`,
+  speaker:`<svg viewBox="0 0 24 24" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#fff"/><path d="M16 9q2 3 0 6M18.5 6.5q4 5.5 0 11"/></svg>`,
+  left:`<svg viewBox="0 0 24 24" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>`,
+  right:`<svg viewBox="0 0 24 24" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>`,
+  star:`<svg viewBox="0 0 24 24"><path d="M12 2.5l2.8 6 6.5.7-4.9 4.4 1.4 6.4L12 16.8 6.2 20l1.4-6.4L2.7 9.2l6.5-.7z" fill="#FFD86B" stroke="${INK}" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  play:`<svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="#fff" stroke="${INK}" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
+  stop:`<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="#fff" stroke="${INK}" stroke-width="2.2"/></svg>`
+};
+
+/* =========================================================
+   DATA
+   ========================================================= */
+const WORDS=[
+  {w:'ambulance', a:'an', zh:'救護車', art:'ambulance', snd:'ambulance'},
+  {w:'fire truck', a:'a', zh:'消防車', art:'fireTruck', snd:'fireTruck'},
+  {w:'police car', a:'a', zh:'警車', art:'policeCar', snd:'policeCar'},
+  {w:'siren', a:'a', zh:'警報器', art:'siren', snd:'siren'},
+  {w:'earthquake', a:'an', zh:'地震', art:'earthquake', snd:'earthquake'},
+  {w:'tsunami', a:'a', zh:'海嘯', art:'tsunami', snd:'tsunami'},
+  {w:'whistle', a:'a', zh:'哨子', art:'whistle', snd:'whistle'},
+  {w:'radio', a:'a', zh:'收音機', art:'radio', snd:'radio'}
+];
+const W=k=>WORDS.find(x=>x.w===k);
+const GS='https://actions.google.com/sounds/v1/';
+const NICE=[
+  {id:'birds',a:'bird',en:'birds',zh:'小鳥唱歌',u:'animals/june_songbirds.ogg'},
+  {id:'stream',a:'stream',en:'a stream',zh:'小溪流水',u:'water/small_stream_flowing.ogg'},
+  {id:'waves',a:'waves',en:'waves',zh:'海浪',u:'water/waves_crashing_on_rock_beach.ogg'},
+  {id:'rain',a:'rain',en:'rain',zh:'下小雨',u:'weather/light_rain.ogg'},
+  {id:'leaves',a:'leaves',en:'leaves',zh:'風吹樹葉',u:'weather/leaves_russle_on_tree.ogg'},
+  {id:'chimes',a:'chimes',en:'wind chimes',zh:'風鈴',u:'household/wind_chimes_of_shells.ogg'},
+  {id:'cat',a:'cat',en:'a cat',zh:'貓咪呼嚕',u:'animals/cat_purr_close.ogg'},
+  {id:'crickets',a:'cricket',en:'crickets',zh:'蟋蟀叫',u:'animals/afternoon_crickets_long.ogg'},
+  {id:'triangle',a:'triangle',en:'a triangle',zh:'三角鐵',u:'alarms/dinner_bell_triangle.ogg'},
+  {id:'baby',a:'baby',en:'a baby',zh:'寶寶咿咿呀呀',u:'human_voices/babies_coo.ogg'}
+];
+const DAILY=[
+  {id:'dog',a:'dog',en:'a dog',zh:'小狗叫',u:'animals/dog_barking.ogg'},
+  {id:'bee',a:'bee',en:'a bee',zh:'蜜蜂嗡嗡',u:'animals/bee_buzz.ogg'},
+  {id:'clock',a:'clock',en:'a clock',zh:'時鐘滴答',u:'household/clock_ticking.ogg'},
+  {id:'brush',a:'tooth',en:'a toothbrush',zh:'電動牙刷',u:'household/electric_tooth_brush.ogg'},
+  {id:'toilet',a:'toilet',en:'a toilet',zh:'沖馬桶',u:'household/toliet_flush.ogg'},
+  {id:'wash',a:'soap',en:'washing hands',zh:'洗手',u:'water/washing_hands_in_bathroom.ogg'},
+  {id:'chop',a:'carrot',en:'chopping',zh:'切菜',u:'household/chopping_vegetables.ogg'},
+  {id:'typing',a:'keyboard',en:'typing',zh:'打鍵盤',u:'household/typing_keyboard.ogg'},
+  {id:'sneeze',a:'sneeze',en:'a sneeze',zh:'打噴嚏',u:'human_voices/male_sneeze.ogg'},
+  {id:'babycry',a:'babycry',en:'a baby crying',zh:'寶寶哭',u:'human_voices/babies_cry.ogg'},
+  {id:'thunder',a:'thunder',en:'thunder',zh:'打雷',u:'weather/thunder_crack.ogg'},
+  {id:'heavyrain',a:'heavyrain',en:'heavy rain',zh:'下大雨',u:'weather/rain_heavy_loud.ogg'},
+  {id:'traffic',a:'traffic',en:'traffic',zh:'馬路車聲',u:'transportation/city_traffic.ogg'},
+  {id:'moto',a:'scooter',en:'a scooter',zh:'摩托車',u:'transportation/motorcycle_drive_by.ogg'},
+  {id:'heli',a:'heli',en:'a helicopter',zh:'直升機',u:'transportation/helicopter_by.ogg'}
+];
+const SIGNALS=[
+  {id:'alarmclock',a:'alarmclock',en:'an alarm clock',zh:'鬧鐘',msg:'起床囉！',u:'alarms/alarm_clock.ogg'},
+  {id:'phone',a:'phone',en:'a phone',zh:'電話響',msg:'有人打電話來！',u:'household/telephone_ring.ogg'},
+  {id:'reverse',a:'reverse',en:'a truck backing up',zh:'倒車嗶嗶',msg:'車子在倒退，離遠一點！',u:'transportation/drive_in_reverse_beep_alert.ogg'},
+  {id:'horn',a:'car',en:'a car horn',zh:'汽車喇叭',msg:'小心車子！',u:'transportation/car_horn.ogg'},
+  {id:'kettle',a:'kettle',en:'a kettle',zh:'水煮開了',msg:'水開了，請大人來關火',u:'household/kettle_boil.ogg'},
+  {id:'thunder2',a:'thunder',en:'thunder',zh:'打雷',msg:'要下大雨了，快進到室內',u:'weather/thunder_crack.ogg'}
+];
+[...NICE,...DAILY,...SIGNALS].forEach(x=>x.url=GS+x.u);
+
+/* one list of everything that can be heard: our words (synth / Taiwan-spec) + real recordings */
+const ITEMS={};
+WORDS.forEach(w=>ITEMS[w.w]={id:w.w,phrase:`${w.a} ${w.w}`,zh:w.zh,inner:()=>ART[w.art](),play:()=>playThing(w.snd)});
+[...NICE,...DAILY].forEach(x=>ITEMS[x.id]={id:x.id,phrase:x.en,zh:x.zh,inner:()=>`<g class="ported">${A2[x.a]()}</g>`,play:el=>playRec(x.url,8,el)});
+const itemArt=it=>svg(it.inner());
+const SENT=['ambulance','fire truck','police car','siren','birds','dog','rain','bee'];
+
+/* voice levels */
+const LV=[
+  {n:0,a:'shh',en:'No voice',zh:'安靜無聲',demo:'',vol:0,c:'#A79B90'},
+  {n:1,a:'mouse',en:'Whisper',zh:'悄悄話',demo:'小聲小聲，悄悄話。',vol:.18,c:'#5FB894'},
+  {n:2,a:'cat',en:'Partner voice',zh:'小聲說話',demo:'我和旁邊的同學說話。',vol:.45,c:'#5E8FD6'},
+  {n:3,a:'dog',en:'Class voice',zh:'全班聽得到',demo:'大家好，我要上台發表！',vol:.8,c:'#F0A93B'},
+  {n:4,a:'lion',en:'Outside voice',zh:'大聲',demo:'加油！加油！',vol:1,c:'#F07C6C'}
+];
+const SCENES=[
+  {a:'books',en:'library',zh:'圖書館看書',ok:[0,1]},{a:'test',en:'test time',zh:'考試的時候',ok:[0]},
+  {a:'siren',en:'alarm drill',zh:'警報響、聽指揮時',ok:[0]},{a:'moon',en:'nap time',zh:'午休時間',ok:[0]},
+  {a:'hospital',en:'hospital',zh:'在醫院',ok:[1]},{a:'popcorn',en:'movie theater',zh:'在電影院',ok:[0,1]},
+  {a:'train',en:'MRT / bus',zh:'搭捷運、公車',ok:[1,2]},{a:'group',en:'group work',zh:'小組討論',ok:[2]},
+  {a:'bento',en:'lunch time',zh:'吃午餐聊天',ok:[2]},{a:'showtell',en:'show and tell',zh:'上台發表',ok:[3]},
+  {a:'ball',en:'playground',zh:'在操場玩、加油',ok:[4]},{a:'sos',en:'I need help!',zh:'遇到危險要求救',ok:[4]}
+];
+
+/* safety: patterns in REAL seconds (on / off). Demo plays at 1/5 speed. */
+const AIR=[]; for(let i=0;i<3;i++){AIR.push(['on',15],['off',5],['on',5],['off',5],['on',5]); if(i<2)AIR.push(['off',5]);}
+const TSU=[['on',5],['off',5],['on',5],['voice',14]];
+const GOV='https://prepare.mnd.gov.tw/emergency-responses';
+const SAFE=[
+  {id:'air', art:'siren', en:'Air Raid Alarm', zh:'空襲警報', pat:AIR,
+   note:'一長聲、兩短聲，重複 3 次，一共 115 秒。<br>（長聲 15 秒、短聲 5 秒，中間停 5 秒）',
+   act:'Go to a shelter.', actZh:'跟著大人和警察指引，到最近的避難處。', actArt:'shelter'},
+  {id:'clear', art:'allClear', en:'All Clear', zh:'解除警報', pat:[['on',90]],
+   note:'一長聲，一共 90 秒。代表警報解除了。',
+   act:"It's OK now.", actZh:'危險過去了，聽大人說可以再出來。', actArt:'allClear'},
+  {id:'tsu', art:'tsunami', en:'Tsunami Alarm', zh:'海嘯警報', pat:TSU,
+   note:'響 5 秒、停 5 秒、再響 5 秒，接著廣播：「海嘯警報，海嘯警報，請所有民眾迅速往高處疏散」。<br>（沒有廣播的警報台：響 5 秒、停 5 秒，重複 9 次。）',
+   act:'Go up high!', actZh:'離開海邊，快往高的地方走！', actArt:'upHigh'},
+  {id:'eq', art:'earthquake', en:'Earthquake', zh:'地震', pat:null,
+   note:'大地震前，手機會響起「國家級警報」：很刺耳的嗶—嗶嗶聲，就算靜音也會響。聽到要馬上保護自己！',
+   act:'Drop, cover, hold on!', actZh:'趴下、掩護、穩住！躲在桌子下，抓住桌腳。', actArt:'drop'},
+  {id:'car', art:'ambulance', en:'Sirens on the Road', zh:'救護車、消防車、警車', pat:null,
+   note:'依序播放：消防車（慢慢變高再變低）→ 救護車（一低一高）→ 警車（很快地叫）。聽到了代表有人需要幫忙。<br><button class="play" style="font-size:15px;padding:3px 10px;margin-top:4px" onclick="playGS(this)">▶ 國外救護車真實錄音</button>',
+   act:'Make way!', actZh:'讓路給它們，不要擋住。', actArt:'makeWay'},
+  {id:'call', art:'phone', en:'Call for Help', zh:'打電話求救', pat:null,
+   note:'火災、有人受傷：打 119。<br>遇到壞人、需要警察：打 110。',
+   act:'Call 119 or 110.', actZh:'請大人幫忙一起打，說清楚在哪裡。', actArt:'phone'}
+];
+
+/* =========================================================
+   AUDIO  (Web Audio only — no audio files)
+   ========================================================= */
+let AC=null, master, musicGain, sfxGain, musicOn=false, musicTimer=null, nextNote=0, step=0;
+const MUSIC_VOL=.16, DUCK_VOL=.035;
+function ac(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.9; master.connect(AC.destination);
+    musicGain=AC.createGain(); musicGain.gain.value=MUSIC_VOL; musicGain.connect(master);
+    sfxGain=AC.createGain(); sfxGain.gain.value=.55; sfxGain.connect(master);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+function tone(f,t,d,type='sine',v=.3,dest){
+  const o=AC.createOscillator(), g=AC.createGain();
+  o.type=type; o.frequency.setValueAtTime(f,t);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+.015); g.gain.exponentialRampToValueAtTime(.0008,t+d);
+  o.connect(g); g.connect(dest||sfxGain); o.start(t); o.stop(t+d+.05); return o;
+}
+let duckCount=0;
+function duck(on){
+  if(!AC) return; duckCount=Math.max(0,duckCount+(on?1:-1));
+  const t=AC.currentTime; musicGain.gain.cancelScheduledValues(t);
+  musicGain.gain.setTargetAtTime(duckCount>0?DUCK_VOL:MUSIC_VOL,t,.12);
+}
+
+/* original bouncy tune — C major, 112 bpm */
+const MEL=[ // [midi or null, beats]
+  [72,.5],[76,.5],[79,.5],[76,.5],[77,.5],[76,.5],[74,1],
+  [71,.5],[74,.5],[77,.5],[74,.5],[76,.5],[74,.5],[72,1],
+  [72,.5],[76,.5],[79,.5],[81,.5],[79,.5],[77,.5],[76,.5],[74,.5],
+  [72,.5],[74,.5],[76,.5],[74,.5],[72,1.5],[null,.5]
+];
+const BASS=[48,48,53,53,55,55,48,48, 47,47,50,50,55,55,48,48, 48,48,53,53,48,48,55,55, 53,53,55,55,48,48,48,48];
+const mf=m=>440*Math.pow(2,(m-69)/12);
+const BEAT=60/112;
+let melIdx=0, melT=0, bassIdx=0, bassT=0;
+function scheduleMusic(){
+  const ahead=AC.currentTime+.25;
+  while(melT<ahead){
+    const [m,b]=MEL[melIdx]; const d=b*BEAT;
+    if(m){ tone(mf(m),melT,Math.min(d*.95,.5),'triangle',.22,musicGain); tone(mf(m+12),melT,.12,'sine',.04,musicGain); }
+    melT+=d; melIdx=(melIdx+1)%MEL.length;
+  }
+  while(bassT<ahead){
+    tone(mf(BASS[bassIdx]),bassT,.28,'sine',.28,musicGain);
+    if(bassIdx%2===1) tone(1800,bassT,.03,'square',.015,musicGain);
+    bassT+=BEAT*.5; bassIdx=(bassIdx+1)%BASS.length;
+  }
+}
+function startMusic(){
+  ac(); if(musicOn) return; musicOn=true;
+  melT=bassT=AC.currentTime+.08; melIdx=bassIdx=0;
+  musicTimer=setInterval(scheduleMusic,80); scheduleMusic(); setMusicBtn();
+}
+function stopMusic(){ musicOn=false; clearInterval(musicTimer); setMusicBtn(); }
+function setMusicBtn(){ const b=$('#musicBtn'); b.innerHTML=musicOn?ICON.music:ICON.musicOff; b.classList.toggle('off',!musicOn); }
+
+/* simple effects */
+function sfx(k){
+  ac(); const t=AC.currentTime;
+  if(k==='good'){ tone(660,t,.15,'triangle',.3); tone(880,t+.11,.22,'triangle',.3); tone(1320,t+.22,.25,'sine',.15); }
+  if(k==='bad'){ tone(330,t,.18,'square',.08); tone(247,t+.14,.3,'square',.08); }
+  if(k==='flip'){ const o=tone(500,t,.12,'sine',.25); o.frequency.exponentialRampToValueAtTime(900,t+.1); }
+  if(k==='win'){ [523,659,784,1047,784,1047].forEach((f,i)=>tone(f,t+i*.11,.3,'triangle',.25)); }
+  if(k==='tap'){ tone(700,t,.06,'sine',.15); }
+}
+
+/* sound-of-the-thing (short, cartoon versions) */
+function noiseBuf(sec){
+  const b=AC.createBuffer(1,AC.sampleRate*sec,AC.sampleRate), d=b.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; return b;
+}
+function sirenTone(t,dur,v=.11){ // civil-defense wail (two rotors + slight wobble)
+  const o1=AC.createOscillator(),o2=AC.createOscillator(),lfo=AC.createOscillator(),lg=AC.createGain(),g=AC.createGain(),f=AC.createBiquadFilter();
+  o1.type=o2.type='sawtooth'; f.type='lowpass'; f.frequency.value=2200;
+  const rise=Math.min(2.2,dur*.35), fall=Math.min(1.6,dur*.3);
+  [o1.frequency,o2.frequency].forEach((p,i)=>{ const k=i?1.335:1; p.setValueAtTime(140*k,t); p.exponentialRampToValueAtTime(470*k,t+rise);
+    p.setValueAtTime(470*k,t+dur-fall); p.exponentialRampToValueAtTime(220*k,t+dur+.4); });
+  lfo.frequency.value=5; lg.gain.value=4; lfo.connect(lg); lg.connect(o1.frequency); lg.connect(o2.frequency);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+rise*.7); g.gain.setValueAtTime(v,t+dur-fall); g.gain.linearRampToValueAtTime(.0001,t+dur+.4);
+  o1.connect(f); o2.connect(f); f.connect(g); g.connect(sfxGain);
+  [o1,o2,lfo].forEach(o=>{o.start(t); o.stop(t+dur+.5);});
+  return [o1,o2,lfo];
+}
+/* Taiwan emergency-vehicle sirens, per 內政部「災害緊急應變警報訊號」公告 (111.11.4)
+   fire: 700→1500 Hz in 1.5 s, back in 3.5 s | ambulance: 700 Hz 0.4 s / 950 Hz 0.6 s | police: up 0.23 s, down 0.1 s */
+function vehicleSiren(kind,sec){
+  const t0=AC.currentTime+.05,o=AC.createOscillator(),o2=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter(),g2=AC.createGain();
+  o.type='square'; o2.type='sawtooth'; f.type='lowpass'; f.frequency.value=3200; g2.gain.value=.5;
+  o.connect(f); o2.connect(g2); g2.connect(f); f.connect(g); g.connect(sfxGain);
+  g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(.08,t0+.08); g.gain.setValueAtTime(.08,t0+sec-.3); g.gain.linearRampToValueAtTime(0,t0+sec);
+  const F=[o.frequency,o2.frequency], set=(v,t)=>F.forEach(p=>p.setValueAtTime(v,t)), ramp=(v,t)=>F.forEach(p=>p.linearRampToValueAtTime(v,t));
+  let t=t0;
+  if(kind==='fire'){ set(700,t); while(t<t0+sec){ ramp(1500,t+1.5); ramp(700,t+5); t+=5; } }
+  else if(kind==='police'){ set(700,t); while(t<t0+sec){ ramp(1500,t+.23); ramp(700,t+.33); t+=.33; } }
+  else { while(t<t0+sec){ set(700,t); set(950,t+.4); t+=1; } }
+  o.start(t0); o2.start(t0); o.stop(t0+sec+.05); o2.stop(t0+sec+.05);
+  return [o,o2];
+}
+let recNow=null, recFade=null;
+function stopRec(){ clearInterval(recFade); if(recNow){ recNow.pause(); recNow=null; duck(false); } document.querySelectorAll('.playing').forEach(e=>e.classList.remove('playing')); }
+function playRec(url,max=10,el){
+  hush(); ac(); const a=new Audio(url); recNow=a; duck(true); if(el) el.classList.add('playing');
+  a.onended=stopRec;
+  a.onerror=()=>{ stopRec(); toast('錄音載入失敗：請確認有連網<br><span class="zh" style="font-size:15px">（iPad 舊版 Safari 可能不支援 .ogg，可改用 Chrome）</span>'); };
+  const pr=a.play(); if(pr&&pr.catch) pr.catch(()=>{});
+  setTimeout(()=>{ if(recNow!==a) return; recFade=setInterval(()=>{ a.volume=Math.max(0,a.volume-.08); if(a.volume<=.02) stopRec(); },80); },max*1000);
+  return max;
+}
+function hush(){ if(typeof stopDemo==='function') stopDemo(); stopReal(); stopSynth(); stopRec(); if(window.speechSynthesis) speechSynthesis.cancel(); if(typeof gsAudio!=='undefined'&&gsAudio){gsAudio.pause();gsAudio=null;} }
+/* 國家級警報 (PWS) attention tone: 853 Hz + 960 Hz mixed;
+   rhythm = long 2 s, short 1 s, short 1 s (0.5 s gaps), sequence played twice */
+function nationalAlert(t0){
+  const nodes=[]; let t=t0;
+  const seq=[2,1,1];
+  for(let r=0;r<2;r++){ seq.forEach(d=>{ [853,960].forEach(f=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.02); g.gain.setValueAtTime(.12,t+d-.03); g.gain.linearRampToValueAtTime(0,t+d);
+      o.connect(g); g.connect(sfxGain); o.start(t); o.stop(t+d+.05); nodes.push(o); }); t+=d+.5; }); }
+  return nodes;
+}
+let synthNodes=[];
+function stopSynth(){ synthNodes.forEach(n=>{try{n.stop()}catch(e){}}); synthNodes=[]; }
+/* ---------- REAL AUDIO FILES (put them in a "sounds" folder next to index.html) ----------
+   If a file is missing, the page falls back to the built-in synthesized sound. */
+const FILES={
+  ambulance:'sounds/ambulance.mp3',  fireTruck:'sounds/fire-truck.mp3', policeCar:'sounds/police-car.mp3',
+  air:'sounds/air-raid.mp3',         clear:'sounds/all-clear.mp3',      tsu:'sounds/tsunami-alarm.mp3',
+  earthquake:'sounds/earthquake-alert.mp3', whistle:'sounds/whistle.mp3', radio:'sounds/radio.mp3'
+};
+const ALIAS={siren:'air', tsunami:'tsu', eq:'earthquake', car:'ambulance'};
+const REALOK={}, REALEL={};
+Object.entries(FILES).forEach(([k,src])=>{
+  const a=new Audio(); a.preload='auto'; a.src=src;
+  a.addEventListener('canplaythrough',()=>{REALOK[k]=true; markReal();},{once:true});
+  a.addEventListener('loadedmetadata',()=>{REALOK[k]=true; markReal();},{once:true});
+  a.addEventListener('error',()=>{REALOK[k]=false;});
+  REALEL[k]=a;
+});
+const realKey=k=>REALOK[k]?k:(ALIAS[k]&&REALOK[ALIAS[k]]?ALIAS[k]:null);
+let realNow=null, realFade=null;
+function stopReal(){
+  clearInterval(realFade);
+  if(realNow){ realNow.pause(); realNow.volume=1; realNow.onended=null; realNow.ontimeupdate=null; realNow=null; duck(false); }
+}
+/* play a real file; maxSec = clip length for word cards / games (fades out), 0 = whole file */
+function playReal(k,maxSec,onTime,onEnd){
+  const key=realKey(k); if(!key) return 0;
+  ac(); stopReal(); speechSynthesis.cancel();
+  const a=REALEL[key]; a.currentTime=0; a.volume=1; realNow=a; duck(true);
+  const fin=()=>{ if(realNow===a){ stopReal(); } onEnd&&onEnd(); };
+  a.onended=fin; if(onTime) a.ontimeupdate=()=>onTime(a.currentTime,a.duration);
+  const p=a.play(); if(p&&p.catch) p.catch(()=>fin());
+  if(maxSec){
+    setTimeout(()=>{ if(realNow!==a) return; let v=1;
+      realFade=setInterval(()=>{ v-=.1; if(v<=0){ fin(); } else a.volume=Math.max(0,v); },60); }, maxSec*1000);
+  }
+  const d=isFinite(a.duration)&&a.duration?a.duration:maxSec;
+  return maxSec?Math.min(maxSec+.6,d||maxSec):d;
+}
+function markReal(){ const n=Object.values(REALOK).filter(Boolean).length; const el=document.getElementById('realTag'); if(el) el.style.display=n?'inline-block':'none'; }
+function playThing(k){
+  const rl=playReal(k,5); if(rl) return rl;
+  ac(); stopReal(); const t=AC.currentTime+.02; let len=1.8;
+  stopSynth();
+  if(k==='ambulance'){ synthNodes=vehicleSiren('ambulance',4); len=4.1; }
+  if(k==='fireTruck'){ synthNodes=vehicleSiren('fire',5); len=5.1; }
+  if(k==='policeCar'){ synthNodes=vehicleSiren('police',3); len=3.1; }
+  if(k==='siren'){ synthNodes=sirenTone(t,4); len=4.5; }
+  if(k==='earthquake'){ synthNodes=nationalAlert(t); len=10; }
+  if(k==='tsunami'){
+    for(let j=0;j<2;j++){ const s=AC.createBufferSource(); s.buffer=noiseBuf(1.2); const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=.8;
+      const st=t+j*.9; bp.frequency.setValueAtTime(300,st); bp.frequency.linearRampToValueAtTime(1400,st+.6); bp.frequency.linearRampToValueAtTime(400,st+1.2);
+      const g=AC.createGain(); g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.7,st+.5); g.gain.linearRampToValueAtTime(0,st+1.2);
+      s.connect(bp); bp.connect(g); g.connect(sfxGain); s.start(st); }
+    len=2.2;
+  }
+  if(k==='whistle'){ for(let j=0;j<2;j++){ const st=t+j*.5; const o=AC.createOscillator(), lfo=AC.createOscillator(), lg=AC.createGain(), g=AC.createGain();
+      o.frequency.value=2300; lfo.frequency.value=32; lg.gain.value=120; lfo.connect(lg); lg.connect(o.frequency);
+      g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.12,st+.03); g.gain.setValueAtTime(.12,st+.34); g.gain.linearRampToValueAtTime(0,st+.4);
+      o.connect(g); g.connect(sfxGain); o.start(st); lfo.start(st); o.stop(st+.45); lfo.stop(st+.45);} len=1.1; }
+  if(k==='radio'){ const s=AC.createBufferSource(); s.buffer=noiseBuf(.5); const hp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2000;
+    const g=AC.createGain(); g.gain.value=.18; s.connect(hp); hp.connect(g); g.connect(sfxGain); s.start(t);
+    [67,72,76,79,76].forEach((m,i)=>tone(mf(m),t+.55+i*.2,.2,'triangle',.2)); }
+  duck(true); setTimeout(()=>duck(false),len*1000);
+  return len;
+}
+
+/* safety demo: real pattern at 1/5 speed, highlights bars */
+let demo=null;
+let gsAudio=null;
+function playGS(btn){ stopDemo(); stopReal(); stopSynth(); speechSynthesis.cancel();
+  if(gsAudio){ gsAudio.pause(); gsAudio=null; duck(false); return; }
+  ac(); gsAudio=new Audio(GS+'emergency/ambulance_siren.ogg'); duck(true);
+  const end=()=>{ if(gsAudio){gsAudio.pause(); gsAudio=null;} duck(false); };
+  gsAudio.onended=end; gsAudio.onerror=()=>{ end(); toast('錄音載入失敗：請確認有連網（iPad 舊版 Safari 可能不支援 .ogg）'); };
+  gsAudio.play().catch(end); setTimeout(()=>{ if(gsAudio) end(); },10000);
+}
+function stopDemo(){
+  if(!demo) return; if(demo.real) stopReal(); stopSynth(); demo.nodes.forEach(n=>{try{n.stop()}catch(e){}}); demo.timers.forEach(clearTimeout);
+  demo.btn.classList.remove('on'); demo.btn.innerHTML=ICON.play+' Listen 聽聽看';
+  demo.bars.forEach(b=>b.classList.remove('now')); duck(false); speechSynthesis.cancel(); demo=null;
+}
+function playDemo(s,btn){
+  if(demo){ const same=demo.btn===btn; stopDemo(); if(same) return; }
+  ac(); speechSynthesis.cancel(); stopReal();
+  const bars=[...btn.closest('.scard').querySelectorAll('.bar')];
+  const rk={air:'air',clear:'clear',tsu:'tsu',eq:'earthquake',car:'ambulance'}[s.id];
+  if(rk && realKey(rk)){
+    const tot=s.pat?s.pat.reduce((x,y)=>x+y[1],0):0;
+    const onT=(t,d)=>{ if(!s.pat||!d) return; const sec=t/d*tot; let acc2=0, idx=0;
+      for(let i=0;i<s.pat.length;i++){ if(sec>=acc2) idx=i; acc2+=s.pat[i][1]; }
+      bars.forEach((b,i)=>b.classList.toggle('now',i===idx && s.pat[idx][0]==='on')); };
+    demo={nodes:[],timers:[],btn,bars,real:true};
+    btn.classList.add('on'); btn.innerHTML=ICON.stop+' Stop 停止';
+    playReal(rk,0,onT,()=>{ if(demo&&demo.btn===btn) stopDemo(); });
+    return;
+  }
+  const nodes=[], timers=[]; let t=AC.currentTime+.05, acc=0; const k=s.id==='tsu'?1:.2;
+  if(s.pat){
+    s.pat.forEach(([type,sec],i)=>{
+      const d=sec*k;
+      if(type==='on') nodes.push(...sirenTone(t,d));
+      if(type==='voice') timers.push(setTimeout(()=>sayZh('海嘯警報，海嘯警報，請所有民眾迅速往高處疏散。'),acc*1000));
+      timers.push(setTimeout(()=>{bars.forEach(b=>b.classList.remove('now')); bars[i]&&bars[i].classList.add('now');},acc*1000));
+      t+=d; acc+=d;
+    });
+  } else {
+    if(s.id==='car'){ stopSynth(); const n=[]; n.push(...vehicleSiren('fire',5));
+      timers.push(setTimeout(()=>synthNodes.push(...vehicleSiren('ambulance',4)),5300));
+      timers.push(setTimeout(()=>synthNodes.push(...vehicleSiren('police',3)),9600));
+      nodes.push(...n); acc=12.8; duck(true);
+      timers.push(setTimeout(()=>{bars.forEach(b=>b.classList.remove('now'));},0)); }
+    else acc=playThing(s.id==='eq'?'earthquake':'radio');
+    if(s.id==='call'){ acc=0; say(s.act); return; }
+  }
+  timers.push(setTimeout(stopDemo,acc*1000+200));
+  demo={nodes,timers,btn,bars}; btn.classList.add('on'); btn.innerHTML=ICON.stop+' Stop 停止';
+  if(s.pat) duck(true);
+}
+
+/* speech (en-US, a bit slow) — music ducks while speaking */
+let enVoice=null;
+function pickVoice(){
+  const v=speechSynthesis.getVoices();
+  enVoice=v.find(x=>x.lang==='en-US'&&/Samantha|Google US|Aria|Jenny|Zira/i.test(x.name))||v.find(x=>x.lang==='en-US')||v.find(x=>/^en/i.test(x.lang))||null;
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+let zhVoice=null;
+function pickZh(){ const v=speechSynthesis.getVoices(); zhVoice=v.find(x=>/zh[-_]TW/i.test(x.lang))||v.find(x=>/^zh/i.test(x.lang))||null; }
+if('speechSynthesis' in window){ pickZh(); speechSynthesis.addEventListener('voiceschanged',pickZh); }
+function sayZh(text,o={}){ if(!('speechSynthesis' in window)) return; const u=new SpeechSynthesisUtterance(text); u.lang='zh-TW'; u.rate=o.rate||.9; u.volume=o.volume??1; if(zhVoice) u.voice=zhVoice; if(o.onend){u.onend=o.onend;u.onerror=o.onend;} speechSynthesis.speak(u); }
+function say(text,rate=.8,after){
+  if(!('speechSynthesis' in window)){ after&&after(); return; }
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=rate; if(enVoice) u.voice=enVoice;
+  let done=false; const fin=()=>{ if(done) return; done=true; duck(false); after&&after(); };
+  u.onstart=()=>duck(true); u.onend=fin; u.onerror=fin;
+  if(AC) duck(true);
+  speechSynthesis.speak(u);
+  setTimeout(()=>{ if(!done && !speechSynthesis.speaking) fin(); }, 4000);
+}
+
+/* =========================================================
+   UI
+   ========================================================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+const tilt=i=>[-1.6,1.2,-.6,1.8,-1.2,.8,-1.9,1.4][i%8]+'deg';
+
+const PAGES=[['Home','首頁'],['Words','單字'],['Sentence','句型'],['Listen','聽聽看'],['Voice','音量'],['Safety','小橘書'],['Games','遊戲']];
+let cur=0;
+$('#tabs').innerHTML=PAGES.map((p,i)=>`<button class="tab${i?'':' on'}" data-i="${i}">${p[0]}<small>${p[1]}</small></button>`).join('');
+$('#dots').innerHTML=PAGES.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('');
+function go(i){
+  i=Math.max(0,Math.min(PAGES.length-1,i)); if(i===cur && $('#p'+i).classList.contains('show')) return;
+  hush(); if(micStream) micOff(); cur=i;
+  $$('.page').forEach((p,k)=>p.classList.toggle('show',k===i));
+  $$('.tab').forEach((t,k)=>t.classList.toggle('on',k===i));
+  $$('#dots i').forEach((d,k)=>d.classList.toggle('on',k===i));
+  $('#prev').disabled=i===0; $('#next').disabled=i===PAGES.length-1;
+  window.scrollTo({top:0,behavior:'smooth'}); sfx('tap');
+}
+$$('.tab').forEach(t=>t.onclick=()=>go(+t.dataset.i));
+$('#prev').innerHTML=ICON.left; $('#next').innerHTML=ICON.right;
+$('#prev').onclick=()=>go(cur-1); $('#next').onclick=()=>go(cur+1); $('#prev').disabled=true;
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight') go(cur+1);
+  else if(e.key==='ArrowLeft') go(cur-1);
+  else if(e.key==='f'||e.key==='F') toggleFS();
+});
+
+/* header art + tools */
+$('#brandArt').innerHTML=svg(mascot(),'0 0 200 200')+'<span>Fun with Sounds</span>';
+$('#musicBtn').innerHTML=ICON.musicOff;
+$('#musicBtn').onclick=()=>{ musicOn?stopMusic():startMusic(); };
+$('#fsBtn').innerHTML=ICON.fs;
+function fsEl(){return document.fullscreenElement||document.webkitFullscreenElement;}
+function toggleFS(){
+  const d=document.documentElement;
+  if(!fsEl()){ (d.requestFullscreen||d.webkitRequestFullscreen||d.webkitEnterFullscreen||function(){}).call(d); }
+  else { (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document); }
+}
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{$('#fsBtn').innerHTML=fsEl()?ICON.fsOff:ICON.fs;}));
+$('#fsBtn').onclick=toggleFS;
+$('#street').innerHTML=streetSVG();
+
+/* hero */
+const nest=(k,x,y,s)=>`<svg x="${x}" y="${y}" width="${s}" height="${s}" viewBox="0 0 120 120">${ART[k]()}</svg>`;
+$('#heroArt').innerHTML=`<svg viewBox="0 0 560 360"><g filter="url(#rough)">
+  <path d="M0 300 h560" class="ln"/>
+  ${nest('ambulance',8,186,140)}${nest('fireTruck',412,186,140)}
+  <g transform="translate(160 78) scale(1.2)">${mascot()}</g>
+  ${nest('siren',392,36,96)}
+  ${nest('note',110,60,70)}${`<svg x="330" y="14" width="56" height="56" viewBox="0 0 120 120">${ART.note('#7EB6E6')}</svg>`}
+  <g class="ln" stroke="#F59E4C" stroke-width="4"><path class="wave" d="M168 120 q-12 14 0 28"/><path class="wave d2" d="M154 110 q-20 24 0 48"/></g>
+  <rect x="210" y="316" width="140" height="34" rx="14" fill="#FFF1DE" class="o"/>
+  <text x="280" y="340" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="20" fill="${INK}">Listen!</text>
+</g></svg>`;
+$('#goBtn').onclick=()=>{ startMusic(); say("Let's go!"); setTimeout(()=>go(1),600); };
+
+/* words */
+$('#words').innerHTML=WORDS.map((v,i)=>`<button class="card tape ${['','mint','pink'][i%3]} wcard" style="--r:${tilt(i)};--tr:${i%2?3:-4}deg" data-i="${i}">
+  <div class="art">${art(v.art)}</div><b>${v.w}</b><div class="zh">${v.zh}</div></button>`).join('');
+$$('.wcard').forEach(c=>c.onclick=()=>{
+  const v=WORDS[+c.dataset.i]; ac();
+  c.classList.remove('ping'); void c.offsetWidth; c.classList.add('ping');
+  say(v.w,.75,()=>setTimeout(()=>playThing(v.snd),150));
+});
+
+/* sentence */
+$('#sayQ').innerHTML=ICON.speaker; $('#sayQ').onclick=()=>say('What do you hear?');
+$('#chips').innerHTML=SENT.map(k=>{const v=ITEMS[k];return `<button class="chip" data-k="${k}">${v.phrase}<small>${v.zh}</small></button>`;}).join('');
+function stageArt(k){
+  return `<svg viewBox="0 0 360 260"><g filter="url(#rough)">
+    <g transform="translate(-14 70) scale(.92)">${mascot()}</g>
+    <g class="ln" stroke="#F59E4C" stroke-width="4"><path class="wave" d="M168 120 q12 16 0 32"/><path class="wave d2" d="M182 108 q20 28 0 56"/><path class="wave d3" d="M196 96 q28 40 0 80"/></g>
+    ${k?`<svg x="206" y="70" width="150" height="150" viewBox="0 0 120 120">${ITEMS[k].inner()}</svg>`:`<circle cx="280" cy="140" r="52" fill="#FFF1DE" class="o" stroke-dasharray="8 8"/><text x="280" y="156" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="46" fill="#E8B98A">?</text>`}
+  </g></svg>`;
+}
+$('#stage').innerHTML=stageArt(null);
+$$('.chip').forEach(c=>c.onclick=()=>{
+  const v=ITEMS[c.dataset.k]; ac(); hush();
+  $$('.chip').forEach(x=>x.classList.toggle('on',x===c));
+  const b=$('#blank'); b.textContent=v.phrase; b.classList.remove('fill'); void b.offsetWidth; b.classList.add('fill');
+  $('#blankZh').textContent=`我聽到${v.zh}。`;
+  $('#stage').innerHTML=stageArt(c.dataset.k);
+  $('#stageCap').textContent=`I hear ${v.phrase}. 我聽到${v.zh}！`;
+  say(`I hear ${v.phrase}.`,.78,()=>setTimeout(()=>v.play(),150));
+});
+
+/* listen: real recordings */
+function recGrid(id,list,withMsg){
+  $(id).innerHTML=list.map((x,i)=>`<button class="card tape ${['','mint','pink'][i%3]} rc" style="--r:${tilt(i)};--tr:${i%2?3:-4}deg"><div class="art">${art2(x.a)}</div><b>${x.en}</b><span class="zh">${x.zh}</span>${withMsg?`<span class="msg zh">${x.msg}</span>`:''}</button>`).join('');
+  [...$(id).children].forEach((b,i)=>b.onclick=()=>{ if(b.classList.contains('playing')){ stopRec(); return; } playRec(list[i].url,withMsg?8:12,b); });
+}
+recGrid('#niceGrid',NICE); recGrid('#dailyGrid',DAILY); recGrid('#signalGrid',SIGNALS,true);
+
+/* voice levels */
+const lvArt=k=>k==='cat'||k==='dog'?art2(k):art2(k);
+$('#meter').innerHTML=LV.map((l,i)=>`<button class="card lv" style="--c:${l.c};--r:${tilt(i)}" data-n="${l.n}"><div class="art">${lvArt(l.a)}</div><span class="n">${l.n}</span><b>${l.en}</b><span class="zh">${l.zh}</span></button>`).join('');
+$$('#meter .lv').forEach(b=>b.onclick=()=>{ const l=LV[+b.dataset.n]; $$('#meter .lv').forEach(x=>x.classList.toggle('sel',x===b)); hush();
+  if(!l.n){ toast('0 號：不出聲，<br>用眼睛看、用耳朵聽'); return; } ac(); duck(true); sayZh(l.demo,{volume:l.vol,rate:l.n===1?.8:.95,onend:()=>duck(false)}); });
+const sceneArt=a=>a==='siren'?art('siren'):art2(a);
+$('#sceneGrid').innerHTML=SCENES.map((x,i)=>`<div class="card tape ${['','mint','pink'][i%3]} rc" style="--r:${tilt(i+2)}"><div class="art">${sceneArt(x.a)}</div><b>${x.en}</b><span class="zh">${x.zh}</span><div class="lvs">${x.ok.map(n=>`<i style="background:${LV[n].c}">${n}</i>`).join('')}</div></div>`).join('');
+
+/* class noise meter (microphone) */
+let micStream=null,micRAF=null;
+$('#micAni').innerHTML=art2('cat');
+function micOff(){ cancelAnimationFrame(micRAF); if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; } $('#micLv').textContent='已停止'; $('#micFill').style.width='0'; $('#micAni').style.transform=''; }
+$('#micStart').onclick=async()=>{
+  try{ hush(); ac(); if(micStream) micOff(); micStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const src=AC.createMediaStreamSource(micStream),an=AC.createAnalyser(); an.fftSize=1024; src.connect(an);
+    const buf=new Float32Array(an.fftSize); let sm=0,last=-1;
+    const loop=()=>{ an.getFloatTimeDomainData(buf); let q=0; for(const v of buf) q+=v*v;
+      const db=20*Math.log10(Math.sqrt(q/buf.length)+1e-6), x=Math.min(1,Math.max(0,(db+58)/50)); sm=sm*.85+x*.15;
+      const lv=Math.min(4,Math.floor(sm*5)); $('#micFill').style.width=(sm*100)+'%';
+      if(lv!==last){ $('#micAni').innerHTML=art2(LV[lv].a); last=lv; } $('#micAni').style.transform=`scale(${1+sm*.3})`;
+      const tg=+$('#micTarget').value; $('#micLv').innerHTML=`現在：<b>${lv} 號 ${LV[lv].zh}</b><br>${lv>tg?'太大聲囉！小聲一點':'很棒，剛剛好！'}`;
+      micRAF=requestAnimationFrame(loop); };
+    loop();
+  }catch(e){ toast('無法使用麥克風：<br>請允許權限，並用 https（GitHub Pages）開啟'); }
+};
+$('#micStop').onclick=micOff;
+
+/* safety */
+$('#bookRow').innerHTML=`<div style="width:56px">${art('book')}</div><div class="zh">「小橘書」是政府發給每個家庭的《臺灣全民安全指引》，教大家遇到危險時怎麼保護自己。<br>
+  <a class="gov" href="https://prepare.mnd.gov.tw/emergency-responses" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5H5V6h5"/></svg>Real Alarm Sounds <small>聽官網真實警報聲（災害應對）</small></a></div>`;
+$('#safe').innerHTML=SAFE.map((s,i)=>{
+  let pat='';
+  if(s.pat){ const tot=s.pat.reduce((a,b)=>a+b[1],0);
+    pat=`<div class="pattern"><div class="bars">${s.pat.map(([ty,sec])=>`<div class="bar${ty==='off'?' gap':ty==='voice'?' voice':''}" style="width:${sec/tot*100}%"></div>`).join('')}</div></div>`; }
+  return `<div class="card tape ${['','mint','pink'][i%3]} scard" style="--r:${tilt(i+3)}">
+    <div class="art">${art(s.art)}</div>
+    <div class="txt"><h3>${s.en}<span class="zh">${s.zh}</span></h3>
+      <button class="play" data-i="${i}">${ICON.play} Listen 聽聽看</button></div>
+    ${pat}<div class="pnote" style="grid-column:1/-1">${s.note}</div>
+    ${['air','clear','tsu','eq'].includes(s.id)?`<a class="glink" href="${GOV}" target="_blank" rel="noopener">到小橘書官網看更多 →</a>`:''}
+    <div class="act"><div class="mini">${art(s.actArt)}</div><div><b>${s.act}</b><span class="zh">${s.actZh}</span></div>
+      <button class="say" data-say="${i}" title="Listen">${ICON.speaker}</button></div>
+  </div>`;}).join('');
+$$('#safe .play[data-i]').forEach(b=>b.onclick=()=>playDemo(SAFE[+b.dataset.i],b));
+$$('#safe [data-say]').forEach(b=>b.onclick=()=>{ stopDemo(); say(SAFE[+b.dataset.say].act); });
+
+/* =========================================================
+   GAMES
+   ========================================================= */
+const done=[false,false,false,false];
+const GN=[['Sound Detective','聲音小偵探'],['Memory Match','翻翻配對'],['What Should I Do?','怎麼辦才對？'],['Voice Fairy','音量小精靈']];
+const GORDER=['g0','g1','g2','g3'];
+function drawGtabs(){
+  $('#gtabs').innerHTML=GN.map((g,i)=>`<button class="gtab${i===gcur?' on':''}" data-i="${i}">${g[0]}${done[i]?`<span class="star">${ICON.star}</span>`:''}<small>${g[1]}</small></button>`).join('');
+  $$('.gtab').forEach(b=>b.onclick=()=>{gcur=+b.dataset.i; hush(); $$('.game').forEach(g=>g.classList.toggle('show',g.id===GORDER[gcur])); drawGtabs(); sfx('tap');});
+}
+let gcur=0; drawGtabs();
+function toast(html){ document.querySelectorAll('.toast').forEach(x=>x.remove()); const t=document.createElement('div'); t.className='toast'; t.innerHTML=html; document.body.appendChild(t); setTimeout(()=>t.remove(),1800); }
+function finishGame(i){
+  if(!done[i]){ done[i]=true; drawGtabs(); }
+  sfx('win');
+  if(done.every(Boolean)) setTimeout(showWin,700);
+  else toast(`Well done! <span class="zh">完成一個遊戲！</span>`);
+}
+
+/* Game 1: listen to the sound, pick the picture (sirens + real recordings) */
+let g0={};
+const G0POOL=['ambulance','fire truck','police car','siren','whistle','birds','rain','dog','cat','bee','clock','thunder','baby','heli','toilet','sneeze'];
+function g0Start(){ g0={order:shuffle(G0POOL).slice(0,8),i:0,lock:false}; g0Round(); }
+function g0Round(){
+  const ans=ITEMS[g0.order[g0.i]];
+  const others=shuffle(G0POOL.filter(k=>k!==ans.id)).slice(0,2).map(k=>ITEMS[k]);
+  $('#g0score').textContent=`${g0.i+1} / ${g0.order.length}`;
+  $('#g0msg').innerHTML='Listen and tap! <span class="zh">按上面的按鈕聽聲音，選出正確的圖。</span>';
+  $('#g0opts').innerHTML=shuffle([ans,...others]).map(v=>`<button class="opt" data-k="${v.id}"><div class="art">${itemArt(v)}</div><b>${v.phrase}</b><div class="zh">${v.zh}</div></button>`).join('');
+  $$('#g0opts .opt').forEach(b=>b.onclick=()=>g0Pick(b));
+  g0.lock=false;
+}
+$('#g0play').innerHTML=ICON.play+' Play the sound 聽聲音';
+$('#g0play').onclick=()=>{ hush(); ITEMS[g0.order[g0.i]].play(); };
+function g0Pick(b){
+  if(g0.lock) return; const ans=ITEMS[g0.order[g0.i]];
+  if(b.dataset.k===ans.id){
+    g0.lock=true; hush(); b.classList.add('right'); sfx('good');
+    $('#g0msg').innerHTML=`Yes! I hear ${ans.phrase}. <span class="zh">答對了！</span>`;
+    setTimeout(()=>say(`I hear ${ans.phrase}.`),350);
+    setTimeout(()=>{ g0.i++; if(g0.i>=g0.order.length){ $('#g0msg').innerHTML='All done! <span class="zh">全部答對！</span>'; finishGame(0); setTimeout(g0Start,2600);} else g0Round(); },2300);
+  } else { b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); sfx('bad'); $('#g0msg').innerHTML='Try again! <span class="zh">再聽一次看看！</span>'; }
+}
+g0Start();
+
+/* Game 4: voice fairy */
+let g3={};
+function g3Start(){ g3={q:shuffle(SCENES).slice(0,8),i:0,lock:false}; g3Round(); }
+function g3Round(){
+  const sc=g3.q[g3.i]; g3.lock=false;
+  $('#g3score').textContent=`${g3.i+1} / ${g3.q.length}`;
+  $('#g3art').innerHTML=sceneArt(sc.a);
+  $('#g3q').innerHTML=`${sc.en}<span class="zh">${sc.zh}：要用幾號音量？</span>`;
+  $('#g3msg').innerHTML='';
+  $('#g3opts').innerHTML=LV.map(l=>`<button class="opt" data-n="${l.n}"><div class="art">${art2(l.a)}</div><b>${l.n} ${l.en}</b><div class="zh">${l.zh}</div></button>`).join('');
+  $$('#g3opts .opt').forEach(b=>b.onclick=()=>g3Pick(b));
+}
+function g3Pick(b){
+  if(g3.lock) return; const sc=g3.q[g3.i], v=+b.dataset.n;
+  if(sc.ok.includes(v)){
+    g3.lock=true; b.classList.add('right'); sfx('good');
+    $('#g3msg').innerHTML=`Good! <span class="zh">${sc.zh}適合用 ${sc.ok.map(n=>n+' 號 '+LV[n].zh).join(' 或 ')}</span>`;
+    setTimeout(()=>{ g3.i++; if(g3.i>=g3.q.length){ $('#g3msg').innerHTML='All done! <span class="zh">你是音量小精靈！</span>'; finishGame(3); setTimeout(g3Start,2600);} else g3Round(); },2200);
+  } else { b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); sfx('bad'); $('#g3msg').innerHTML='Try again! <span class="zh">再想想～</span>'; }
+}
+g3Start();
+
+/* Game 2: memory match (picture ↔ word) */
+let g1={};
+function g1Start(){
+  g1={open:[],pairs:0,lock:false};
+  const pick=shuffle(WORDS).slice(0,6);
+  const cards=shuffle(pick.flatMap(v=>[{v,t:'pic'},{v,t:'word'}]));
+  $('#g1score').textContent='Pairs 0 / 6';
+  $('#mem').innerHTML=cards.map(c=>`<button class="mc" data-k="${c.v.w}"><div class="in">
+    <div class="face back">${art('note')}</div>
+    <div class="face front">${c.t==='pic'?art(c.v.art):`<b>${c.v.w}<small>${c.v.zh}</small></b>`}</div></div></button>`).join('');
+  $$('.mc').forEach(c=>c.onclick=()=>g1Flip(c));
+}
+function g1Flip(c){
+  if(g1.lock||c.classList.contains('flip')||c.classList.contains('done')) return;
+  c.classList.add('flip'); sfx('flip'); g1.open.push(c);
+  if(g1.open.length<2) return;
+  g1.lock=true; const [a,b]=g1.open;
+  if(a.dataset.k===b.dataset.k){
+    setTimeout(()=>{ a.classList.add('done'); b.classList.add('done'); sfx('good'); say(a.dataset.k,.78);
+      g1.pairs++; $('#g1score').textContent=`Pairs ${g1.pairs} / 6`; g1.open=[]; g1.lock=false;
+      if(g1.pairs===6) setTimeout(()=>finishGame(1),800); },450);
+  } else {
+    setTimeout(()=>{ sfx('bad'); a.classList.remove('flip'); b.classList.remove('flip'); g1.open=[]; g1.lock=false; },1000);
+  }
+}
+$('#g1new').onclick=g1Start; g1Start();
+
+/* Game 3: what should I do? */
+const G2=[
+  {art:'siren', snd:'air', q:'The air raid alarm! What do I do?', zh:'空襲警報響了！要怎麼做？', ans:0},
+  {art:'tsunami', snd:'tsu', q:'The tsunami alarm! What do I do?', zh:'海嘯警報響了！要怎麼做？', ans:1},
+  {art:'earthquake', snd:'eq', q:'An earthquake! What do I do?', zh:'地震了！要怎麼做？', ans:2},
+  {art:'ambulance', snd:'car', q:'An ambulance is coming! What do I do?', zh:'救護車來了！要怎麼做？', ans:3}
+];
+const ACTS=[
+  {en:'Go to a shelter.', zh:'到避難處', art:'shelter'},
+  {en:'Go up high!', zh:'往高處走', art:'upHigh'},
+  {en:'Drop, cover, hold on!', zh:'趴下、掩護、穩住', art:'drop'},
+  {en:'Make way!', zh:'讓路', art:'makeWay'}
+];
+let g2={};
+function g2Start(){ g2={order:shuffle(G2),i:0,lock:false}; g2Round(); }
+function g2Round(){
+  const s=g2.order[g2.i];
+  $('#g2score').textContent=`${g2.i+1} / ${G2.length}`;
+  $('#g2art').innerHTML=art(s.art);
+  $('#g2q').innerHTML=`${s.q}<span class="zh">${s.zh}</span>`;
+  $('#g2msg').innerHTML='';
+  const wrong=shuffle([0,1,2,3].filter(x=>x!==s.ans)).slice(0,2);
+  $('#g2opts').innerHTML=shuffle([s.ans,...wrong]).map(k=>{const a=ACTS[k];return `<button class="opt" data-k="${k}"><div class="art">${art(a.art)}</div><b>${a.en}</b><div class="zh">${a.zh}</div></button>`;}).join('');
+  $$('#g2opts .opt').forEach(b=>b.onclick=()=>g2Pick(b));
+  g2.lock=false;
+}
+$('#g2play').innerHTML=ICON.play+' Listen 聽聽看';
+$('#g2play').onclick=()=>{
+  const s=g2.order[g2.i]; ac();
+  if(playReal(s.snd,8)) return;
+  stopSynth(); speechSynthesis.cancel();
+  if(s.snd==='air'){ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,6),...sirenTone(t+7.5,2.4),...sirenTone(t+11,2.4)]; duck(true); setTimeout(()=>duck(false),14000); }
+  else if(s.snd==='tsu'){ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,4),...sirenTone(t+6,4)]; duck(true); setTimeout(()=>sayZh('海嘯警報，海嘯警報，請往高處疏散'),10500); setTimeout(()=>duck(false),15000); }
+  else playThing(s.snd==='eq'?'earthquake':'ambulance');
+};
+function g2Pick(b){
+  if(g2.lock) return; const s=g2.order[g2.i];
+  if(+b.dataset.k===s.ans){
+    g2.lock=true; b.classList.add('right'); sfx('good');
+    $('#g2msg').innerHTML=`Good! ${ACTS[s.ans].en} <span class="zh">做得好！</span>`;
+    setTimeout(()=>say(ACTS[s.ans].en),350);
+    setTimeout(()=>{ g2.i++; if(g2.i>=G2.length){ $('#g2msg').innerHTML='You are safe! <span class="zh">你會保護自己了！</span>'; finishGame(2); setTimeout(g2Start,2600);} else g2Round(); },2300);
+  } else { b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); sfx('bad'); $('#g2msg').innerHTML='Try again! <span class="zh">再想想看！</span>'; }
+}
+g2Start();
+
+/* =========================================================
+   WIN + CONFETTI
+   ========================================================= */
+$('#winArt').innerHTML=`<svg class="m" viewBox="0 0 200 200"><g filter="url(#rough)">${mascot()}</g></svg>`;
+function showWin(){ $('#win').classList.add('show'); sfx('win'); say('Great job!'); confetti(); }
+$('#winClose').onclick=()=>$('#win').classList.remove('show');
+function confetti(){
+  const c=$('#confetti'), x=c.getContext('2d'); c.width=innerWidth; c.height=innerHeight;
+  const col=['#F59E4C','#F07C6C','#FFD86B','#A8DCC8','#7EB6E6','#F7A1A8'];
+  const P=Array.from({length:160},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.6,vx:(Math.random()-.5)*3,vy:2+Math.random()*3,
+    r:5+Math.random()*7,a:Math.random()*6,va:(Math.random()-.5)*.25,c:col[Math.random()*col.length|0],s:Math.random()<.5}));
+  let f=0;(function tick(){ x.clearRect(0,0,c.width,c.height);
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va; x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;
+      if(p.s){x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);}else{x.beginPath();x.arc(0,0,p.r/2,0,7);x.fill();} x.restore();});
+    if(++f<260) requestAnimationFrame(tick); else x.clearRect(0,0,c.width,c.height); })();
+}
+
+/* =========================================================
+   FALLING NOTES & SOUND WAVES (background)
+   ========================================================= */
+const FALLC=['#F59E4C','#F7A1A8','#7EB6E6','#A8DCC8','#FFD86B'];
+function spawn(){
+  const d=document.createElement('div'); d.className='drop';
+  const c=FALLC[Math.random()*FALLC.length|0], sz=22+Math.random()*22, kind=Math.random();
+  d.innerHTML= kind<.55
+    ? `<svg width="${sz}" height="${sz}" viewBox="0 0 120 120">${ART.note(c)}</svg>`
+    : `<svg width="${sz}" height="${sz}" viewBox="0 0 40 40"><g fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round"><path d="M10 12 q8 8 0 16"/><path d="M18 6 q14 14 0 28"/><circle cx="6" cy="20" r="3" fill="${c}"/></g></svg>`;
+  d.style.left=Math.random()*100+'vw'; d.style.opacity=.35+Math.random()*.35;
+  d.style.setProperty('--dx',(Math.random()*80-40)+'px'); d.style.setProperty('--rot',(Math.random()*60-30)+'deg');
+  const dur=11+Math.random()*9; d.style.animationDuration=dur+'s';
+  $('#fall').appendChild(d); setTimeout(()=>d.remove(),dur*1000);
+}
+for(let i=0;i<5;i++) setTimeout(spawn,i*900);
+setInterval(spawn,1700);
+</script>
+</body>
+</html>
