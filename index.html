@@ -246,6 +246,28 @@ h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
 .lvopts{grid-template-columns:repeat(5,1fr)}
 .lvopts .opt .art{width:min(100%,86px)}
 .fairyArt{width:170px;height:170px}
+/* ---------- ported extras ---------- */
+.steps{list-style:none;padding:0;margin:8px 0 0;counter-reset:st}
+.steps li{counter-increment:st;position:relative;padding:8px 12px 8px 48px;margin:7px 0;background:#FFF6DE;border-radius:14px 10px 16px 10px;font-family:var(--zh);font-size:18px;line-height:1.45}
+.steps li::before{content:counter(st);position:absolute;left:10px;top:7px;width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;font-family:var(--en);font-weight:700;display:grid;place-items:center;border:2px solid var(--ink)}
+.steps li .en{font-family:var(--en);color:#8A6248;font-size:16px;margin-left:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+.pose svg{max-width:320px;margin:0 auto}
+.veh3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.vcard{padding:14px 14px 16px;text-align:center}
+.vcard .art{width:min(100%,150px);aspect-ratio:1;margin:0 auto}
+.vcard b{display:block;font-size:clamp(21px,2.2vw,26px)}
+.vcard .how{font-family:var(--zh);background:#FFF1C2;border-radius:12px;padding:6px 8px;margin:8px 0 4px;font-size:16px}
+.vcard .job{font-family:var(--zh);font-size:16px;color:#8A6248;margin:2px 0 8px}
+.vbtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.src2{font-family:var(--zh);font-size:14px;color:#A07D63;margin-top:8px;line-height:1.5}
+.sentl{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.sentb{display:flex;align-items:center;gap:12px;padding:8px 14px;text-align:left}
+.sentb .art{width:58px;height:58px;flex:none}
+.sentb b{display:block;font-size:clamp(19px,2vw,23px)}
+.sentb .zh{font-size:15px;color:#8A6248}
+.tagS{position:absolute;top:8px;left:8px;font-family:var(--zh);font-size:12px;background:var(--ink);color:#fff;border-radius:8px;padding:1px 7px;z-index:3}
+.nextB{display:none;margin:12px auto 0;font-size:20px;font-weight:700;padding:8px 22px;background:var(--mint);border:3px solid var(--ink);border-radius:20px;box-shadow:0 4px 0 var(--ink)}
 /* ---------- pager ---------- */
 .pager{position:relative;z-index:3;display:flex;justify-content:center;align-items:center;gap:18px;padding:6px 0 34px}
 .pager button{width:58px;height:58px;border:3px solid var(--ink);border-radius:50% 44% 52% 46%;background:var(--paper);box-shadow:0 4px 0 var(--ink);display:grid;place-items:center}
@@ -273,6 +295,8 @@ h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
   .words{grid-template-columns:repeat(4,1fr);gap:22px 14px}
 }
 @media (max-width:820px){
+  .two,.sentl{grid-template-columns:1fr}
+  .veh3{grid-template-columns:1fr}
   .meter,.lvopts{grid-template-columns:repeat(3,1fr)}
   header{flex-wrap:wrap}
   .tabs{order:3;flex:1 1 100%}
@@ -339,6 +363,10 @@ h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
     <h2 class="title">Words</h2>
     <p class="sub">點一下卡片，聽英文，也聽聽它的聲音！</p>
     <div class="words" id="words"></div>
+    <h3 class="sec">More words <span class="zh">更多單字（點一下聽發音）</span></h3>
+    <div class="snd" id="moreWords"></div>
+    <h3 class="sec">Sentences <span class="zh">句型（點一下聽整句）</span></h3>
+    <div class="sentl" id="sentList"></div>
   </section>
 
   <!-- SENTENCE -->
@@ -376,6 +404,7 @@ h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
       <p>Do you like it?<span class="zh">你喜歡這個聲音嗎？為什麼？</span></p>
       <p>Nature or people?<span class="zh">是大自然的聲音，還是人做出來的聲音？</span></p>
     </div>
+    <p class="foot">真實錄音來自 <a href="https://developers.google.com/assistant/tools/sound-library" target="_blank" rel="noopener" style="color:inherit">Google Sound Library</a>（CC BY 4.0），需連網播放。上下課鐘聲、垃圾車音樂由網頁依曲譜即時演奏。</p>
   </section>
 
   <!-- VOICE LEVELS -->
@@ -403,6 +432,70 @@ h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
     <p class="sub">小橘書教我們：聽到這些聲音，要怎麼做？</p>
     <div class="book" id="bookRow"></div>
     <div class="safe" id="safe"></div>
+
+    <h3 class="sec">Emergency vehicles <span class="zh">緊急車輛</span></h3>
+    <div class="veh3" id="vehCols"></div>
+    <div class="card tape talk" style="--r:-.3deg">
+      <h4>When I hear a siren <span class="zh">聽到警笛聲，我會這樣做</span></h4>
+      <ol class="steps">
+        <li>走路時：停在人行道或安全的地方，<b>不要急著過馬路</b>。<span class="en">Stop and wait.</span></li>
+        <li>坐在車上：提醒大人<b>靠邊、讓路</b>。<span class="en">Make way.</span></li>
+        <li>不追著車子看熱鬧，讓救人的人快快通過。<span class="en">Don't follow it.</span></li>
+        <li>需要幫忙：火災、受傷打 <b>119</b>；遇到壞人打 <b>110</b>。</li>
+      </ol>
+      <p class="src2">台灣的警笛聲依內政部「災害緊急應變警報訊號」公告的規格合成：消防車低音升到高音 1.5 秒、再降回 3.5 秒；救護車低音 0.4 秒、高音 0.6 秒交替；警車低音升高音 0.23 秒、降回 0.1 秒。</p>
+    </div>
+
+    <h3 class="sec">Air raid: where and how <span class="zh">防空避難：去哪裡、怎麼做</span></h3>
+    <div class="card tape mint talk two" style="--r:.3deg">
+      <div>
+        <h4>Where? <span class="zh">躲在哪裡比較安全？</span></h4>
+        <ol class="steps">
+          <li><b>地下</b>比地上安全。<span class="en">Go down.</span></li>
+          <li><b>室內</b>比室外安全。<span class="en">Stay inside.</span></li>
+          <li><b>離外牆、門窗遠一點</b>。<span class="en">Stay away from windows.</span></li>
+          <li>遠離瓦斯桶、玻璃、鏡子這些危險的東西。</li>
+        </ol>
+      </div>
+      <div>
+        <h4>How? <span class="zh">避難姿勢</span></h4>
+        <div class="pose" id="poseArt"></div>
+        <ol class="steps">
+          <li>跪下來，身體微微拱起。</li>
+          <li>胸口不要貼在地上。</li>
+          <li>雙手遮住眼睛和耳朵，<b>嘴巴微微張開</b>。</li>
+        </ol>
+      </div>
+      <p class="src2" style="grid-column:1/-1">資料：內政部《防空避難指引》（2025）四大原則；臺北市、臺中市城鎮韌性演習宣導的避難姿勢。</p>
+    </div>
+
+    <h3 class="sec">Tsunami: 4 rules <span class="zh">海嘯避難 4 原則</span></h3>
+    <div class="card tape pink talk" style="--r:-.2deg">
+      <ol class="steps">
+        <li><b>往高處</b>：到 3 樓以上或山坡上。<span class="en">Go up high!</span></li>
+        <li><b>往內陸</b>：附近沒有高的地方，就離海邊越遠越好。<span class="en">Go inland!</span></li>
+        <li><b>找堅固</b>：來不及跑，就躲進堅固的建築物。</li>
+        <li><b>抓牢固</b>：萬一掉進水裡，抓住會漂浮的大東西。</li>
+        <li>在海邊看到<b>海水突然退得很遠</b>，不是好玩的景色，要馬上離開！</li>
+      </ol>
+      <p class="src2">資料：中央氣象署海嘯避難原則。</p>
+    </div>
+
+    <h3 class="sec">Dam water release <span class="zh">水庫放水</span></h3>
+    <div class="card tape talk" style="--r:.2deg">
+      <p class="zh" style="margin-left:0;font-size:18px;color:#5A3A28">水庫要放水（洩洪）之前，會向下游的河床發布<b>廣播警報</b>，提醒大家快離開河邊。</p>
+      <button class="play" id="damPlay"></button>
+      <ol class="steps">
+        <li>聽到放水廣播，<b>馬上離開河床</b>，往岸上高的地方走。</li>
+        <li>颱風、下大雨的時候，<b>不要去河邊、海邊</b>玩水。</li>
+        <li>河水一下子變多、變黃、變快，就是危險訊號！</li>
+      </ol>
+      <p class="src2">資料：經濟部「水（旱）災災害緊急應變警報訊號」公告。按鈕播放的廣播內容是教學示範，不是真實錄音。</p>
+    </div>
+
+    <h3 class="sec">Go bag <span class="zh">緊急避難包</span></h3>
+    <div class="snd" id="bagGrid"></div>
+    <p class="src2" style="text-align:center">放在家門口附近，緊急時一拿就走！資料：臺中市城鎮韌性演習問答集建議的避難包物品（還有衣物、重要證件、現金、地圖等）。</p>
     <p class="foot"><span id="realTag" style="display:none;background:#DDF3E8;border:2px solid #5A3A28;border-radius:10px;padding:1px 8px;margin-bottom:4px">正在使用真實錄音</span><br>沒有放錄音檔時，會播放縮短、比較小聲的示範聲音。真正的警報很大聲、很長。<br>
       資料參考：<a href="https://prepare.mnd.gov.tw/emergency-responses" target="_blank" rel="noopener" style="color:inherit">《臺灣全民安全指引》（小橘書）災害應對</a>、內政部警政署防空警報音符說明、運用防空警報系統發布海嘯警報標準作業程序、內政部「災害緊急應變警報訊號」公告（警笛依此規格合成）、消防署地震避難動作。<br>國外救護車錄音：<a href="https://developers.google.com/assistant/tools/sound-library" target="_blank" rel="noopener" style="color:inherit">Google Sound Library</a>（CC BY 4.0），需連網。</p>
   </section>
@@ -410,7 +503,7 @@ h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
   <!-- GAMES -->
   <section class="page" id="p6">
     <h2 class="title">Games</h2>
-    <p class="sub">四個遊戲都完成，就有驚喜喔！</p>
+    <p class="sub">五個遊戲都完成，就有驚喜喔！</p>
     <div class="gtabs" id="gtabs"></div>
 
     <div class="game show" id="g0">
@@ -427,6 +520,16 @@ h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
         <div class="ghead"><h3>Memory Match<span class="zh">翻翻配對</span></h3>
           <span><span class="score" id="g1score"></span> <button class="again" id="g1new">New 重來</button></span></div>
         <div class="mem" id="mem"></div>
+      </div>
+    </div>
+
+    <div class="game" id="g4">
+      <div class="card tape mint gpanel" style="--r:-.3deg">
+        <div class="ghead"><h3>Alarm Hero<span class="zh">警報小英雄</span></h3><span class="score" id="g4score"></span></div>
+        <button class="bigPlay" id="g4play"></button>
+        <div class="opts" id="g4opts"></div>
+        <div class="msg" id="g4msg"></div>
+        <button class="nextB" id="g4next">Next 下一題</button>
       </div>
     </div>
 
@@ -460,7 +563,7 @@ h3.sec .zh{font-size:17px;color:#8A6248;font-weight:400}
 <div id="win"><div class="card tape" style="--r:-1deg">
   <div id="winArt"></div>
   <h2>Great job!</h2>
-  <div class="zh">四個遊戲都完成了，你是聲音小達人！</div>
+  <div class="zh">五個遊戲都完成了，你是聲音小達人！</div>
   <button class="go" id="winClose" style="animation:none;font-size:24px;padding:8px 28px">OK!</button>
 </div></div>
 <canvas id="confetti"></canvas>
@@ -858,7 +961,10 @@ const SIGNALS=[
   {id:'kettle',a:'kettle',en:'a kettle',zh:'水煮開了',msg:'水開了，請大人來關火',u:'household/kettle_boil.ogg'},
   {id:'thunder2',a:'thunder',en:'thunder',zh:'打雷',msg:'要下大雨了，快進到室內',u:'weather/thunder_crack.ogg'}
 ];
-[...NICE,...DAILY,...SIGNALS].forEach(x=>x.url=GS+x.u);
+SIGNALS.unshift(
+  {id:'schoolbell',a:'schoolbell',en:'the school bell',zh:'上下課鐘聲',msg:'上課了／下課了',tag:'電腦演奏',play:el=>runSynth(schoolBell,el)},
+  {id:'garbage',a:'garbage',en:'the garbage truck',zh:'垃圾車音樂',msg:'垃圾車來了，快去倒垃圾！',tag:'電腦演奏',play:el=>runSynth(Math.random()<.5?furElise:maiden,el)});
+[...NICE,...DAILY,...SIGNALS].forEach(x=>{ if(x.u) x.url=GS+x.u; });
 
 /* one list of everything that can be heard: our words (synth / Taiwan-spec) + real recordings */
 const ITEMS={};
@@ -912,6 +1018,7 @@ const SAFE=[
 /* =========================================================
    AUDIO  (Web Audio only — no audio files)
    ========================================================= */
+let recIn, recComp, recOut, REC_IN=8, REC_OUT=.36;
 let AC=null, master, musicGain, sfxGain, musicOn=false, musicTimer=null, nextNote=0, step=0;
 const MUSIC_VOL=.16, DUCK_VOL=.035;
 function ac(){
@@ -920,6 +1027,11 @@ function ac(){
     master=AC.createGain(); master.gain.value=.9; master.connect(AC.destination);
     musicGain=AC.createGain(); musicGain.gain.value=MUSIC_VOL; musicGain.connect(master);
     sfxGain=AC.createGain(); sfxGain.gain.value=.55; sfxGain.connect(master);
+    /* recordings: lift quiet ones, tame loud ones, land near the siren's loudness */
+    recIn=AC.createGain(); recIn.gain.value=REC_IN;
+    recComp=AC.createDynamicsCompressor(); recComp.threshold.value=-30; recComp.knee.value=6; recComp.ratio.value=12; recComp.attack.value=.005; recComp.release.value=.3;
+    recOut=AC.createGain(); recOut.gain.value=REC_OUT;
+    recIn.connect(recComp); recComp.connect(recOut); recOut.connect(master);
   }
   if(AC.state==='suspended') AC.resume();
   return AC;
@@ -992,7 +1104,7 @@ function sirenTone(t,dur,v=.11){ // civil-defense wail (two rotors + slight wobb
     p.setValueAtTime(470*k,t+dur-fall); p.exponentialRampToValueAtTime(220*k,t+dur+.4); });
   lfo.frequency.value=5; lg.gain.value=4; lfo.connect(lg); lg.connect(o1.frequency); lg.connect(o2.frequency);
   g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+rise*.7); g.gain.setValueAtTime(v,t+dur-fall); g.gain.linearRampToValueAtTime(.0001,t+dur+.4);
-  o1.connect(f); o2.connect(f); f.connect(g); g.connect(sfxGain);
+  o1.connect(f); o2.connect(f); f.connect(g); g.connect(outFor('civil'));
   [o1,o2,lfo].forEach(o=>{o.start(t); o.stop(t+dur+.5);});
   return [o1,o2,lfo];
 }
@@ -1001,7 +1113,7 @@ function sirenTone(t,dur,v=.11){ // civil-defense wail (two rotors + slight wobb
 function vehicleSiren(kind,sec){
   const t0=AC.currentTime+.05,o=AC.createOscillator(),o2=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter(),g2=AC.createGain();
   o.type='square'; o2.type='sawtooth'; f.type='lowpass'; f.frequency.value=3200; g2.gain.value=.5;
-  o.connect(f); o2.connect(g2); g2.connect(f); f.connect(g); g.connect(sfxGain);
+  o.connect(f); o2.connect(g2); g2.connect(f); f.connect(g); g.connect(outFor('veh_'+kind));
   g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(.08,t0+.08); g.gain.setValueAtTime(.08,t0+sec-.3); g.gain.linearRampToValueAtTime(0,t0+sec);
   const F=[o.frequency,o2.frequency], set=(v,t)=>F.forEach(p=>p.setValueAtTime(v,t)), ramp=(v,t)=>F.forEach(p=>p.linearRampToValueAtTime(v,t));
   let t=t0;
@@ -1013,10 +1125,20 @@ function vehicleSiren(kind,sec){
 }
 let recNow=null, recFade=null;
 function stopRec(){ clearInterval(recFade); if(recNow){ recNow.pause(); recNow=null; duck(false); } document.querySelectorAll('.playing').forEach(e=>e.classList.remove('playing')); }
-function playRec(url,max=10,el){
-  hush(); ac(); const a=new Audio(url); recNow=a; duck(true); if(el) el.classList.add('playing');
+/* send an <audio> element through the loudness chain.
+   Cross-site files need CORS; if the site refuses, we fall back to normal (un-boosted) playback. */
+function boosted(url,cross){
+  ac(); const a=new Audio(); if(cross) a.crossOrigin='anonymous'; a.src=url;
+  try{ AC.createMediaElementSource(a).connect(recIn); a._boost=true; }catch(e){}
+  return a;
+}
+const LOUDOK=()=>location.protocol.startsWith('http');
+function playRec(url,max=10,el,plain){
+  hush(); ac(); const a=plain?new Audio(url):boosted(url,true); recNow=a; duck(true); if(el) el.classList.add('playing');
   a.onended=stopRec;
-  a.onerror=()=>{ stopRec(); toast('錄音載入失敗：請確認有連網<br><span class="zh" style="font-size:15px">（iPad 舊版 Safari 可能不支援 .ogg，可改用 Chrome）</span>'); };
+  a.onerror=()=>{ stopRec();
+    if(!plain){ playRec(url,max,el,true); return; }
+    toast('錄音載入失敗：請確認有連網<br><span class="zh" style="font-size:15px">（iPad 舊版 Safari 可能不支援 .ogg，可改用 Chrome）</span>'); };
   const pr=a.play(); if(pr&&pr.catch) pr.catch(()=>{});
   setTimeout(()=>{ if(recNow!==a) return; recFade=setInterval(()=>{ a.volume=Math.max(0,a.volume-.08); if(a.volume<=.02) stopRec(); },80); },max*1000);
   return max;
@@ -1025,15 +1147,38 @@ function hush(){ if(typeof stopDemo==='function') stopDemo(); stopReal(); stopSy
 /* 國家級警報 (PWS) attention tone: 853 Hz + 960 Hz mixed;
    rhythm = long 2 s, short 1 s, short 1 s (0.5 s gaps), sequence played twice */
 function nationalAlert(t0){
-  const nodes=[]; let t=t0;
+  const nodes=[]; let t=t0; const out=outFor('pws');
   const seq=[2,1,1];
   for(let r=0;r<2;r++){ seq.forEach(d=>{ [853,960].forEach(f=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type='sine'; o.frequency.value=f;
       g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.02); g.gain.setValueAtTime(.12,t+d-.03); g.gain.linearRampToValueAtTime(0,t+d);
-      o.connect(g); g.connect(sfxGain); o.start(t); o.stop(t+d+.05); nodes.push(o); }); t+=d+.5; }); }
+      o.connect(g); g.connect(out); o.start(t); o.stop(t+d+.05); nodes.push(o); }); t+=d+.5; }); }
   return nodes;
 }
+/* loudness matching: every sound goes through its own level, all tuned to the air-raid siren */
+const LEVEL={melody:1,chime:1,fur:1.86,maiden:1.22,civil: 1.0, veh_fire: 0.88, veh_ambulance: 0.88, veh_police: 0.88, pws: 0.63, tsunami: 0.79, whistle: 0.9, radio: 0.78}; // measured: each matched to the civil siren's loudness
+function outFor(kind){ const g=AC.createGain(); g.gain.value=LEVEL[kind]||1; g.connect(sfxGain); return g; }
+const NF=n=>{const m=n.match(/^([A-G])(#|b)?(\d)$/),map={C:0,D:2,E:4,F:5,G:7,A:9,B:11}; const k=map[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0); return 440*Math.pow(2,(k+(+m[3]-4)*12-9)/12);};
+function bell(f,t,d,v,out){ tone(f,t,d,'sine',v,out); tone(f*2.01,t,d*.6,'sine',v*.35,out); tone(f*3,t,d*.3,'triangle',v*.12,out); }
+let melBus=null;
+/* public-domain tunes heard every day in Taiwan */
+function schoolBell(){ ac(); melBus=outFor('melody'); const t0=AC.currentTime+.05; let t=t0;
+  ['E5','C5','D5','G4','-','G4','D5','E5','C5','-','E5','D5','C5','G4','-','G4','D5','E5','C5'].forEach(n=>{ if(n!=='-') bell(NF(n),t,1.1,.2,melBus); t+=n==='-'?.5:.62; });
+  return t-t0+1.2; }
+function furElise(){ ac(); melBus=outFor('fur'); const t0=AC.currentTime+.05,b=.2; let t=t0;
+  [['E5',1],['D#5',1],['E5',1],['D#5',1],['E5',1],['B4',1],['D5',1],['C5',1],['A4',3],['C4',1],['E4',1],['A4',1],['B4',3],['E4',1],['G#4',1],['B4',1],['C5',3],
+   ['E4',1],['E5',1],['D#5',1],['E5',1],['D#5',1],['E5',1],['B4',1],['D5',1],['C5',1],['A4',3],['C4',1],['E4',1],['A4',1],['B4',3],['E4',1],['C5',1],['B4',1],['A4',4]]
+  .forEach(([n,d])=>{ tone(NF(n),t,b*d*.9,'square',.07,melBus); tone(NF(n)*2,t,b*d*.5,'sine',.05,melBus); t+=b*d; });
+  return t-t0+.4; }
+function maiden(){ ac(); melBus=outFor('maiden'); const t0=AC.currentTime+.05,b=.3; let t=t0;
+  [['A#4',1],['D#5',2],['G5',1],['D#5',2],['A#4',1],['D#5',1],['G5',1],['A#5',2],['G5',1],['F5',2],['D#5',3],['A#4',1],['D5',2],['F5',1],['D5',2],['A#4',1],['D5',1],['F5',1],['A#5',2],['F5',1],['D#5',2],['D5',3]]
+  .forEach(([n,d])=>{ bell(NF(n),t,b*d,.16,melBus); t+=b*d; });
+  return t-t0+1; }
+function damChime(){ ac(); melBus=outFor('chime'); const t=AC.currentTime+.05; ['G5','E5','C5'].forEach((n,i)=>bell(NF(n),t+i*.45,.8,.2,melBus)); return 2; }
 let synthNodes=[];
-function stopSynth(){ synthNodes.forEach(n=>{try{n.stop()}catch(e){}}); synthNodes=[]; }
+function stopSynth(){ synthNodes.forEach(n=>{try{n.stop()}catch(e){}}); synthNodes=[]; if(melBus){ try{melBus.disconnect()}catch(e){} melBus=null; } clearTimeout(synthTimer); document.querySelectorAll('.playing').forEach(e=>e.classList.remove('playing')); }
+let synthTimer=null;
+/* run a synthesized sound with ducking + 'playing' wiggle; fn returns seconds */
+function runSynth(fn,el){ hush(); ac(); const len=fn(); if(el) el.classList.add('playing'); duck(true); synthTimer=setTimeout(()=>{ duck(false); if(el) el.classList.remove('playing'); },len*1000); }
 /* ---------- REAL AUDIO FILES (put them in a "sounds" folder next to index.html) ----------
    If a file is missing, the page falls back to the built-in synthesized sound. */
 const FILES={
@@ -1060,7 +1205,8 @@ function stopReal(){
 function playReal(k,maxSec,onTime,onEnd){
   const key=realKey(k); if(!key) return 0;
   ac(); stopReal(); speechSynthesis.cancel();
-  const a=REALEL[key]; a.currentTime=0; a.volume=1; realNow=a; duck(true);
+  const a=REALEL[key]; if(LOUDOK()&&!a._boost){ try{ AC.createMediaElementSource(a).connect(recIn); a._boost=true; }catch(e){} }
+  a.currentTime=0; a.volume=1; realNow=a; duck(true);
   const fin=()=>{ if(realNow===a){ stopReal(); } onEnd&&onEnd(); };
   a.onended=fin; if(onTime) a.ontimeupdate=()=>onTime(a.currentTime,a.duration);
   const p=a.play(); if(p&&p.catch) p.catch(()=>fin());
@@ -1081,20 +1227,20 @@ function playThing(k){
   if(k==='policeCar'){ synthNodes=vehicleSiren('police',3); len=3.1; }
   if(k==='siren'){ synthNodes=sirenTone(t,4); len=4.5; }
   if(k==='earthquake'){ synthNodes=nationalAlert(t); len=10; }
-  if(k==='tsunami'){
+  if(k==='tsunami'){ const out=outFor('tsunami');
     for(let j=0;j<2;j++){ const s=AC.createBufferSource(); s.buffer=noiseBuf(1.2); const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=.8;
       const st=t+j*.9; bp.frequency.setValueAtTime(300,st); bp.frequency.linearRampToValueAtTime(1400,st+.6); bp.frequency.linearRampToValueAtTime(400,st+1.2);
       const g=AC.createGain(); g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.7,st+.5); g.gain.linearRampToValueAtTime(0,st+1.2);
-      s.connect(bp); bp.connect(g); g.connect(sfxGain); s.start(st); }
+      s.connect(bp); bp.connect(g); g.connect(out); s.start(st); }
     len=2.2;
   }
-  if(k==='whistle'){ for(let j=0;j<2;j++){ const st=t+j*.5; const o=AC.createOscillator(), lfo=AC.createOscillator(), lg=AC.createGain(), g=AC.createGain();
+  if(k==='whistle'){ const out=outFor('whistle'); for(let j=0;j<2;j++){ const st=t+j*.5; const o=AC.createOscillator(), lfo=AC.createOscillator(), lg=AC.createGain(), g=AC.createGain();
       o.frequency.value=2300; lfo.frequency.value=32; lg.gain.value=120; lfo.connect(lg); lg.connect(o.frequency);
       g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.12,st+.03); g.gain.setValueAtTime(.12,st+.34); g.gain.linearRampToValueAtTime(0,st+.4);
-      o.connect(g); g.connect(sfxGain); o.start(st); lfo.start(st); o.stop(st+.45); lfo.stop(st+.45);} len=1.1; }
-  if(k==='radio'){ const s=AC.createBufferSource(); s.buffer=noiseBuf(.5); const hp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2000;
-    const g=AC.createGain(); g.gain.value=.18; s.connect(hp); hp.connect(g); g.connect(sfxGain); s.start(t);
-    [67,72,76,79,76].forEach((m,i)=>tone(mf(m),t+.55+i*.2,.2,'triangle',.2)); }
+      o.connect(g); g.connect(out); o.start(st); lfo.start(st); o.stop(st+.45); lfo.stop(st+.45);} len=1.1; }
+  if(k==='radio'){ const out=outFor('radio'); const s=AC.createBufferSource(); s.buffer=noiseBuf(.5); const hp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2000;
+    const g=AC.createGain(); g.gain.value=.18; s.connect(hp); hp.connect(g); g.connect(out); s.start(t);
+    [67,72,76,79,76].forEach((m,i)=>tone(mf(m),t+.55+i*.2,.2,'triangle',.2,out)); }
   duck(true); setTimeout(()=>duck(false),len*1000);
   return len;
 }
@@ -1104,9 +1250,9 @@ let demo=null;
 let gsAudio=null;
 function playGS(btn){ stopDemo(); stopReal(); stopSynth(); speechSynthesis.cancel();
   if(gsAudio){ gsAudio.pause(); gsAudio=null; duck(false); return; }
-  ac(); gsAudio=new Audio(GS+'emergency/ambulance_siren.ogg'); duck(true);
+  ac(); const url=GS+'emergency/ambulance_siren.ogg'; gsAudio=boosted(url,true); duck(true);
   const end=()=>{ if(gsAudio){gsAudio.pause(); gsAudio=null;} duck(false); };
-  gsAudio.onended=end; gsAudio.onerror=()=>{ end(); toast('錄音載入失敗：請確認有連網（iPad 舊版 Safari 可能不支援 .ogg）'); };
+  gsAudio.onended=end; gsAudio.onerror=()=>{ if(gsAudio&&gsAudio._boost){ gsAudio=new Audio(url); gsAudio.onended=end; gsAudio.onerror=()=>{end(); toast('錄音載入失敗：請確認有連網');}; gsAudio.play().catch(end); return; } end(); toast('錄音載入失敗：請確認有連網（iPad 舊版 Safari 可能不支援 .ogg）'); };
   gsAudio.play().catch(end); setTimeout(()=>{ if(gsAudio) end(); },10000);
 }
 function stopDemo(){
@@ -1264,8 +1410,8 @@ $$('.chip').forEach(c=>c.onclick=()=>{
 
 /* listen: real recordings */
 function recGrid(id,list,withMsg){
-  $(id).innerHTML=list.map((x,i)=>`<button class="card tape ${['','mint','pink'][i%3]} rc" style="--r:${tilt(i)};--tr:${i%2?3:-4}deg"><div class="art">${art2(x.a)}</div><b>${x.en}</b><span class="zh">${x.zh}</span>${withMsg?`<span class="msg zh">${x.msg}</span>`:''}</button>`).join('');
-  [...$(id).children].forEach((b,i)=>b.onclick=()=>{ if(b.classList.contains('playing')){ stopRec(); return; } playRec(list[i].url,withMsg?8:12,b); });
+  $(id).innerHTML=list.map((x,i)=>`<button class="card tape ${['','mint','pink'][i%3]} rc" style="--r:${tilt(i)};--tr:${i%2?3:-4}deg"><div class="art">${art2(x.a)}</div><b>${x.en}</b><span class="zh">${x.zh}</span>${withMsg?`<span class="msg zh">${x.msg}</span>`:''}${x.tag?`<span class="tagS">${x.tag}</span>`:''}</button>`).join('');
+  [...$(id).children].forEach((b,i)=>b.onclick=()=>{ if(b.classList.contains('playing')){ hush(); return; } const x=list[i]; x.play?x.play(b):playRec(x.url,withMsg?8:12,b); });
 }
 recGrid('#niceGrid',NICE); recGrid('#dailyGrid',DAILY); recGrid('#signalGrid',SIGNALS,true);
 
@@ -1296,8 +1442,49 @@ $('#micStart').onclick=async()=>{
 };
 $('#micStop').onclick=micOff;
 
+/* words page: more words + sentences (from 聲音的世界) */
+const MORE=[['ear','ear','耳朵'],['headphones','listen','聽'],['speaker','sound','聲音'],['megaphone','loud','大聲的'],['shh','quiet','安靜的'],['noisy','noisy','吵鬧的'],
+  ['mouse','whisper','悄悄話'],['alarmclock','alarm','警報；鬧鐘'],['bird','bird','小鳥'],['rain','rain','雨'],['schoolbell','bell','鈴；鐘'],['shield','safe','安全的'],['sos','help','救命；幫忙'],['waves','wave','海浪']];
+$('#moreWords').innerHTML=MORE.map(([a,en,zh],i)=>`<button class="card tape ${['','mint','pink'][i%3]} rc" style="--r:${tilt(i+1)}"><div class="art">${art2(a)}</div><b>${en}</b><span class="zh">${zh}</span></button>`).join('');
+[...$('#moreWords').children].forEach((b,i)=>b.onclick=()=>{ hush(); ac(); b.classList.remove('ping'); void b.offsetWidth; b.classList.add('ping'); say(MORE[i][1],.75); });
+const SENTS=[['ear','What do you hear?','你聽到什麼？'],['bird','I hear a bird.','我聽到小鳥的聲音。'],['lion','It is loud.','它很大聲。'],['mouse','It is quiet.','它很安靜。'],
+  ['shh','Shh! Please use a quiet voice.','噓！請小聲一點。'],['#ambulance','Make way for the ambulance!','讓救護車先過！'],['shield','Stay calm and follow your teacher.','保持冷靜，跟著老師。'],['wavesW','Go up high!','往高處去！']];
+$('#sentList').innerHTML=SENTS.map(([a,en,zh],i)=>`<button class="card sentb" style="--r:${tilt(i)*.4}deg"><div class="art">${a[0]==='#'?art(a.slice(1)):art2(a)}</div><div><b>${en}</b><span class="zh">${zh}</span></div></button>`).join('');
+[...$('#sentList').children].forEach((b,i)=>b.onclick=()=>{ hush(); ac(); say(SENTS[i][1],.78); });
+
+/* emergency vehicles */
+const VEH=[
+  {kind:'fire',a:'fireTruck',en:'fire truck',zh:'消防車',how:'喔～咿～ 長長的，慢慢變高、再慢慢變低',job:'工作：救火、救人',real:'emergency/emergency_siren_close_long.ogg'},
+  {kind:'ambulance',a:'ambulance',en:'ambulance',zh:'救護車',how:'喔咿、喔咿 一低一高，換來換去',job:'工作：載受傷、生病的人去醫院',real:'emergency/ambulance_siren.ogg'},
+  {kind:'police',a:'policeCar',en:'police car',zh:'警車',how:'喔喔喔喔 很快很快地叫',job:'工作：抓壞人、保護大家',real:'emergency/emergency_siren_short_burst.ogg'}
+];
+$('#vehCols').innerHTML=VEH.map((v,i)=>`<div class="card tape ${['','mint','pink'][i]} vcard" style="--r:${tilt(i)}"><div class="art">${art(v.a)}</div><b>${v.en}</b><span class="zh">${v.zh}</span>
+  <div class="how">${v.how}</div><div class="job">${v.job}</div>
+  <div class="vbtns"><button class="play" data-tw="${i}">${ICON.play} 台灣的聲音</button><button class="play" style="background:#fff" data-rl="${i}">${ICON.play} 國外錄音</button></div></div>`).join('');
+$$('#vehCols [data-tw]').forEach(b=>b.onclick=()=>{ const v=VEH[+b.dataset.tw]; runSynth(()=>{ synthNodes=vehicleSiren(v.kind,10); return 10; }, b.closest('.vcard')); });
+$$('#vehCols [data-rl]').forEach(b=>b.onclick=()=>{ const v=VEH[+b.dataset.rl]; playRec(GS+v.real,10,b.closest('.vcard')); });
+
+/* air-raid pose picture */
+$('#poseArt').innerHTML=`<svg viewBox="0 0 240 130"><g filter="url(#rough)" class="ported">
+  <rect x="0" y="118" width="240" height="6" rx="3" fill="#E9DCCB" stroke="none"/>
+  <path d="M40 118q4-46 50-52 44-4 66 22l10 30z" fill="#F59E4C"/><path d="M60 118q0-12 14-12h40q12 0 12 12z" fill="#C9875A"/>
+  <circle cx="168" cy="92" r="24" fill="#FFE0C2"/><path d="M146 84q4-24 26-24 18 2 20 18-10-8-24-6-12 2-22 12z" fill="#6B4A36"/>
+  <ellipse cx="170" cy="104" rx="3" ry="4" fill="#E8657A" stroke="none"/><path d="M150 82q10 10 30 2" stroke="#FFE0C2" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M150 82q10 10 30 2" fill="none"/>
+  <text x="8" y="24" font-family="jf-openhuninn,'PingFang TC','Microsoft JhengHei',sans-serif" font-size="15" fill="#5A3A28">跪姿・身體微拱・胸口離地</text>
+  <text x="8" y="46" font-family="jf-openhuninn,'PingFang TC','Microsoft JhengHei',sans-serif" font-size="15" fill="#5A3A28">雙手遮眼耳・嘴巴微張</text></g></svg>`;
+
+/* dam release demo */
+$('#damPlay').innerHTML=ICON.play+' 聽聽看（教學示範）';
+$('#damPlay').onclick=()=>{ hush(); ac(); duck(true); damChime();
+  synthTimer=setTimeout(()=>sayZh('這裡是水庫管理中心廣播。水庫一小時後要開始放水，河水會變多、變快。請在河床上的民眾，立刻離開河床，不要在河邊玩水。',{onend:()=>duck(false)}),1600); };
+
+/* go bag */
+const BAG=[['bottle','water','水'],['can','food','食物'],['flashlight','flashlight','手電筒（照明）'],['radio','radio','收音機（通訊）'],['firstaid','first aid kit','急救藥品']];
+$('#bagGrid').innerHTML=BAG.map(([a,en,zh],i)=>`<div class="card tape ${['','mint','pink'][i%3]} rc" style="--r:${tilt(i)}"><div class="art">${art2(a)}</div><b>${en}</b><span class="zh">${zh}</span></div>`).join('');
+
 /* safety */
-$('#bookRow').innerHTML=`<div style="width:56px">${art('book')}</div><div class="zh">「小橘書」是政府發給每個家庭的《臺灣全民安全指引》，教大家遇到危險時怎麼保護自己。<br>
+$('#bookRow').innerHTML=`<div style="width:56px">${art('book')}</div><div class="zh">「小橘書」是國防部發給每個家庭的《當危機來臨時：台灣全民安全指引》，教大家遇到地震、海嘯、颱風、空襲時，怎麼保護自己和家人。<br>
   <a class="gov" href="https://prepare.mnd.gov.tw/emergency-responses" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5H5V6h5"/></svg>Real Alarm Sounds <small>聽官網真實警報聲（災害應對）</small></a></div>`;
 $('#safe').innerHTML=SAFE.map((s,i)=>{
   let pat='';
@@ -1318,9 +1505,9 @@ $$('#safe [data-say]').forEach(b=>b.onclick=()=>{ stopDemo(); say(SAFE[+b.datase
 /* =========================================================
    GAMES
    ========================================================= */
-const done=[false,false,false,false];
-const GN=[['Sound Detective','聲音小偵探'],['Memory Match','翻翻配對'],['What Should I Do?','怎麼辦才對？'],['Voice Fairy','音量小精靈']];
-const GORDER=['g0','g1','g2','g3'];
+const done=[false,false,false,false,false];
+const GN=[['Sound Detective','聲音小偵探'],['Memory Match','翻翻配對'],['What Should I Do?','怎麼辦才對？'],['Voice Fairy','音量小精靈'],['Alarm Hero','警報小英雄']];
+const GORDER=['g0','g1','g2','g3','g4'];
 function drawGtabs(){
   $('#gtabs').innerHTML=GN.map((g,i)=>`<button class="gtab${i===gcur?' on':''}" data-i="${i}">${g[0]}${done[i]?`<span class="star">${ICON.star}</span>`:''}<small>${g[1]}</small></button>`).join('');
   $$('.gtab').forEach(b=>b.onclick=()=>{gcur=+b.dataset.i; hush(); $$('.game').forEach(g=>g.classList.toggle('show',g.id===GORDER[gcur])); drawGtabs(); sfx('tap');});
@@ -1381,6 +1568,35 @@ function g3Pick(b){
   } else { b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); sfx('bad'); $('#g3msg').innerHTML='Try again! <span class="zh">再想想～</span>'; }
 }
 g3Start();
+
+/* Game 5: alarm hero — which siren / alarm is it? */
+const HERO=[
+  {id:'fire',a:'fireTruck',en:'fire truck',zh:'消防車',play:()=>{ synthNodes=vehicleSiren('fire',7); return 7; },todo:'靠邊讓路，讓消防員快去救火！'},
+  {id:'amb',a:'ambulance',en:'ambulance',zh:'救護車',play:()=>{ synthNodes=vehicleSiren('ambulance',6); return 6; },todo:'靠邊讓路，讓救護車快去醫院！'},
+  {id:'pol',a:'policeCar',en:'police car',zh:'警車',play:()=>{ synthNodes=vehicleSiren('police',5); return 5; },todo:'停在安全的地方，不要追著看。'},
+  {id:'air',a:'siren',en:'air raid alarm',zh:'防空警報',play:()=>{ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,6),...sirenTone(t+7.5,2.4),...sirenTone(t+11,2.4)]; return 14; },todo:'1 長 2 短！安靜聽指揮，往地下室避難。（遊戲是縮短版）'},
+  {id:'tsu',a:'tsunami',en:'tsunami alarm',zh:'海嘯警報',play:()=>{ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,4),...sirenTone(t+6,4)]; synthTimer=setTimeout(()=>sayZh('海嘯警報，海嘯警報，請往高處疏散'),10500); return 15; },todo:'往高處、往內陸跑！'},
+  {id:'clr',a:'allClear',en:'all clear',zh:'解除警報',play:()=>{ synthNodes=sirenTone(AC.currentTime+.05,9); return 9.5; },todo:'一長聲：危險過去了，等大人說可以再出來。'}
+];
+let g4={};
+function g4Play(){ hush(); ac(); const len=g4.ans.play(); duck(true); setTimeout(()=>duck(false),len*1000); }
+function g4Start(){ g4={q:shuffle(HERO),i:0,lock:false}; g4Round(); }
+function g4Round(){
+  const ans=g4.q[g4.i]; g4.ans=ans; g4.lock=false;
+  $('#g4score').textContent=`${g4.i+1} / ${g4.q.length}`;
+  $('#g4msg').innerHTML='What is it? <span class="zh">這是什麼警報、警笛？按上面的按鈕聽聽看。</span>'; $('#g4next').style.display='none';
+  $('#g4opts').innerHTML=shuffle([ans,...shuffle(HERO.filter(x=>x!==ans)).slice(0,2)]).map(v=>`<button class="opt" data-id="${v.id}"><div class="art">${art(v.a)}</div><b>${v.en}</b><div class="zh">${v.zh}</div></button>`).join('');
+  $$('#g4opts .opt').forEach(b=>b.onclick=()=>g4Pick(b));
+}
+$('#g4play').innerHTML=ICON.play+' Listen 聽聽看'; $('#g4play').onclick=g4Play;
+function g4Pick(b){
+  if(g4.lock) return; g4.lock=true; const ok=b.dataset.id===g4.ans.id;
+  if(ok){ b.classList.add('right'); sfx('good'); } else { b.classList.add('wrong'); sfx('bad'); $$('#g4opts .opt').find(x=>x.dataset.id===g4.ans.id).classList.add('right'); }
+  $('#g4msg').innerHTML=`${ok?'Yes! 答對了！':'答案是'} <b>${g4.ans.zh}</b> <span class="zh">${g4.ans.todo}</span>`;
+  $('#g4next').style.display='block';
+}
+$('#g4next').onclick=()=>{ hush(); g4.i++; if(g4.i>=g4.q.length){ finishGame(4); setTimeout(g4Start,2600); } else g4Round(); };
+g4Start();
 
 /* Game 2: memory match (picture ↔ word) */
 let g1={};
