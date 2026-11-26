@@ -995,11 +995,11 @@ const AIR=[]; for(let i=0;i<3;i++){AIR.push(['on',15],['off',5],['on',5],['off',
 const TSU=[['on',5],['off',5],['on',5],['voice',14]];
 const GOV='https://prepare.mnd.gov.tw/emergency-responses';
 const SAFE=[
-  {id:'air', art:'siren', en:'Air Raid Alarm', zh:'空襲警報', pat:AIR,
-   note:'一長聲、兩短聲，重複 3 次，一共 115 秒。<br>（長聲 15 秒、短聲 5 秒，中間停 5 秒）',
+  {id:'air', art:'siren', en:'Air Raid Alarm', zh:'空襲警報', pat:AIR, demoPat:AIR.slice(0,5), full:'完整 115 秒',
+   note:'一長聲、兩短聲，重複 3 次，一共 115 秒。<br>（長聲 15 秒、短聲 5 秒，中間停 5 秒）<br>「Listen」播第一輪（35 秒），「完整 115 秒」播全部。',
    act:'Go to a shelter.', actZh:'跟著大人和警察指引，到最近的避難處。', actArt:'shelter'},
-  {id:'clear', art:'allClear', en:'All Clear', zh:'解除警報', pat:[['on',90]],
-   note:'一長聲，一共 90 秒。代表警報解除了。',
+  {id:'clear', art:'allClear', en:'All Clear', zh:'解除警報', pat:[['on',90]], demoPat:[['on',15]], full:'完整 90 秒',
+   note:'一長聲，一共 90 秒。代表警報解除了。<br>「Listen」播前 15 秒，「完整 90 秒」播全部。',
    act:"It's OK now.", actZh:'危險過去了，聽大人說可以再出來。', actArt:'allClear'},
   {id:'tsu', art:'tsunami', en:'Tsunami Alarm', zh:'海嘯警報', pat:TSU,
    note:'響 5 秒、停 5 秒、再響 5 秒，接著廣播：「海嘯警報，海嘯警報，請所有民眾迅速往高處疏散」。<br>（沒有廣播的警報台：響 5 秒、停 5 秒，重複 9 次。）',
@@ -1257,10 +1257,10 @@ function playGS(btn){ stopDemo(); stopReal(); stopSynth(); speechSynthesis.cance
 }
 function stopDemo(){
   if(!demo) return; if(demo.real) stopReal(); stopSynth(); demo.nodes.forEach(n=>{try{n.stop()}catch(e){}}); demo.timers.forEach(clearTimeout);
-  demo.btn.classList.remove('on'); demo.btn.innerHTML=ICON.play+' Listen 聽聽看';
+  demo.btn.classList.remove('on'); demo.btn.innerHTML=demo.label||(ICON.play+' Listen 聽聽看');
   demo.bars.forEach(b=>b.classList.remove('now')); duck(false); speechSynthesis.cancel(); demo=null;
 }
-function playDemo(s,btn){
+function playDemo(s,btn,full){
   if(demo){ const same=demo.btn===btn; stopDemo(); if(same) return; }
   ac(); speechSynthesis.cancel(); stopReal();
   const bars=[...btn.closest('.scard').querySelectorAll('.bar')];
@@ -1270,15 +1270,15 @@ function playDemo(s,btn){
     const onT=(t,d)=>{ if(!s.pat||!d) return; const sec=t/d*tot; let acc2=0, idx=0;
       for(let i=0;i<s.pat.length;i++){ if(sec>=acc2) idx=i; acc2+=s.pat[i][1]; }
       bars.forEach((b,i)=>b.classList.toggle('now',i===idx && s.pat[idx][0]==='on')); };
-    demo={nodes:[],timers:[],btn,bars,real:true};
+    demo={nodes:[],timers:[],btn,bars,real:true,label:btn.innerHTML};
     btn.classList.add('on'); btn.innerHTML=ICON.stop+' Stop 停止';
     playReal(rk,0,onT,()=>{ if(demo&&demo.btn===btn) stopDemo(); });
     return;
   }
-  const nodes=[], timers=[]; let t=AC.currentTime+.05, acc=0; const k=s.id==='tsu'?1:.2;
+  const nodes=[], timers=[]; let t=AC.currentTime+.05, acc=0;
   if(s.pat){
-    s.pat.forEach(([type,sec],i)=>{
-      const d=sec*k;
+    (full?s.pat:(s.demoPat||s.pat)).forEach(([type,sec],i)=>{
+      const d=sec; // real seconds, same rhythm as the real alarm
       if(type==='on') nodes.push(...sirenTone(t,d));
       if(type==='voice') timers.push(setTimeout(()=>sayZh('海嘯警報，海嘯警報，請所有民眾迅速往高處疏散。'),acc*1000));
       timers.push(setTimeout(()=>{bars.forEach(b=>b.classList.remove('now')); bars[i]&&bars[i].classList.add('now');},acc*1000));
@@ -1294,7 +1294,7 @@ function playDemo(s,btn){
     if(s.id==='call'){ acc=0; say(s.act); return; }
   }
   timers.push(setTimeout(stopDemo,acc*1000+200));
-  demo={nodes,timers,btn,bars}; btn.classList.add('on'); btn.innerHTML=ICON.stop+' Stop 停止';
+  demo={nodes,timers,btn,bars,label:btn.innerHTML}; btn.classList.add('on'); btn.innerHTML=ICON.stop+' Stop 停止';
   if(s.pat) duck(true);
 }
 
@@ -1493,13 +1493,14 @@ $('#safe').innerHTML=SAFE.map((s,i)=>{
   return `<div class="card tape ${['','mint','pink'][i%3]} scard" style="--r:${tilt(i+3)}">
     <div class="art">${art(s.art)}</div>
     <div class="txt"><h3>${s.en}<span class="zh">${s.zh}</span></h3>
-      <button class="play" data-i="${i}">${ICON.play} Listen 聽聽看</button></div>
+      <button class="play" data-i="${i}">${ICON.play} Listen 聽聽看</button>${s.full?` <button class="play" data-full="${i}" style="background:#fff">${ICON.play} ${s.full}</button>`:''}</div>
     ${pat}<div class="pnote" style="grid-column:1/-1">${s.note}</div>
     ${['air','clear','tsu','eq'].includes(s.id)?`<a class="glink" href="${GOV}" target="_blank" rel="noopener">到小橘書官網看更多 →</a>`:''}
     <div class="act"><div class="mini">${art(s.actArt)}</div><div><b>${s.act}</b><span class="zh">${s.actZh}</span></div>
       <button class="say" data-say="${i}" title="Listen">${ICON.speaker}</button></div>
   </div>`;}).join('');
 $$('#safe .play[data-i]').forEach(b=>b.onclick=()=>playDemo(SAFE[+b.dataset.i],b));
+$$('#safe .play[data-full]').forEach(b=>b.onclick=()=>playDemo(SAFE[+b.dataset.full],b,true));
 $$('#safe [data-say]').forEach(b=>b.onclick=()=>{ stopDemo(); say(SAFE[+b.dataset.say].act); });
 
 /* =========================================================
@@ -1574,7 +1575,7 @@ const HERO=[
   {id:'fire',a:'fireTruck',en:'fire truck',zh:'消防車',play:()=>{ synthNodes=vehicleSiren('fire',7); return 7; },todo:'靠邊讓路，讓消防員快去救火！'},
   {id:'amb',a:'ambulance',en:'ambulance',zh:'救護車',play:()=>{ synthNodes=vehicleSiren('ambulance',6); return 6; },todo:'靠邊讓路，讓救護車快去醫院！'},
   {id:'pol',a:'policeCar',en:'police car',zh:'警車',play:()=>{ synthNodes=vehicleSiren('police',5); return 5; },todo:'停在安全的地方，不要追著看。'},
-  {id:'air',a:'siren',en:'air raid alarm',zh:'防空警報',play:()=>{ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,6),...sirenTone(t+7.5,2.4),...sirenTone(t+11,2.4)]; return 14; },todo:'1 長 2 短！安靜聽指揮，往地下室避難。（遊戲是縮短版）'},
+  {id:'air',a:'siren',en:'air raid alarm',zh:'防空警報',play:()=>{ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,7.5),...sirenTone(t+10,2.5),...sirenTone(t+15,2.5)]; return 18; },todo:'1 長 2 短！安靜聽指揮，往地下室避難。（遊戲用一半速度播一輪）'},
   {id:'tsu',a:'tsunami',en:'tsunami alarm',zh:'海嘯警報',play:()=>{ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,4),...sirenTone(t+6,4)]; synthTimer=setTimeout(()=>sayZh('海嘯警報，海嘯警報，請往高處疏散'),10500); return 15; },todo:'往高處、往內陸跑！'},
   {id:'clr',a:'allClear',en:'all clear',zh:'解除警報',play:()=>{ synthNodes=sirenTone(AC.currentTime+.05,9); return 9.5; },todo:'一長聲：危險過去了，等大人說可以再出來。'}
 ];
@@ -1656,7 +1657,7 @@ $('#g2play').onclick=()=>{
   const s=g2.order[g2.i]; ac();
   if(playReal(s.snd,8)) return;
   stopSynth(); speechSynthesis.cancel();
-  if(s.snd==='air'){ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,6),...sirenTone(t+7.5,2.4),...sirenTone(t+11,2.4)]; duck(true); setTimeout(()=>duck(false),14000); }
+  if(s.snd==='air'){ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,7.5),...sirenTone(t+10,2.5),...sirenTone(t+15,2.5)]; duck(true); setTimeout(()=>duck(false),18000); }
   else if(s.snd==='tsu'){ const t=AC.currentTime+.05; synthNodes=[...sirenTone(t,4),...sirenTone(t+6,4)]; duck(true); setTimeout(()=>sayZh('海嘯警報，海嘯警報，請往高處疏散'),10500); setTimeout(()=>duck(false),15000); }
   else playThing(s.snd==='eq'?'earthquake':'ambulance');
 };
